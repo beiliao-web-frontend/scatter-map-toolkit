@@ -11,22 +11,32 @@
 		<div class="main">
 
 			<!-- 提示文案 -->
-			<div class="tips" hidden>
-				<div class="wrap">
-					<i class="icon icon-upload"></i>
-					<p>点击上传图片</p>
+			<div class="tips">
+
+				<div class="middle">
+					<div class="wrap upload">
+						<i class="icon icon-upload"></i>
+						<p>上传图片</p>
+					</div>
+
+					<div class="wrap open">
+						<i class="icon icon-open"></i>
+						<p>打开配置</p>
+					</div>
 				</div>
+
+			</div>
+
+			<!-- 操作按钮 -->
+			<div class="top">
+				<i class="icon icon-zoomin" title="放大"></i>
+				<i class="icon icon-zoomout" title="缩小"></i>
+				<i class="icon icon-img-replace" title="图片替换"></i>
+				<i class="icon icon-online" title="在线预览"></i>
 			</div>
 
 			<!-- 左边绘制区 -->
 			<div class="left">
-				<!-- 操作按钮 -->
-				<div class="ctrl">
-					<i class="icon icon-zoomin" title="放大"></i>
-					<i class="icon icon-zoomout" title="缩小"></i>
-					<i class="icon icon-img-replace" title="图片替换"></i>
-					<i class="icon icon-online" title="在线预览"></i>
-				</div>
 
 				<div class="wrap">
 					<div class="middle">
@@ -54,16 +64,34 @@
 
 					<!-- 内容 -->
 					<div class="content">
+						<div class="search">
+							<i class="icon icon-search"></i>
+							<input type="text" placeholder="搜索关键字" autocomplete="off" />
+						</div>
+
 						<ul class="list">
-							<li>
-								<p></p>
+							<li class="item active">
+								<span class="status">
+									<i class="icon icon-show" title="隐藏"></i>
+								</span>
+								<p class="single-line" title="分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1">分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1</p>
 								<span class="ctrl">
-									<i class="rename" title="重命名"></i>
-									<i class="show" title="显示分组"></i>
-									<i class="hide" title="隐藏分组"></i>
-									<i class="delete" title="删除分组"></i>
+									<i class="icon icon-edit" title="重命名"></i>
+									<i class="icon icon-delete" title="删除"></i>
 								</span>
 							</li>
+
+							<li class="item">
+								<span class="status">
+									<i class="icon icon-show" title="隐藏"></i>
+								</span>
+								<p class="single-line" title="分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1">分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1</p>
+								<span class="ctrl">
+									<i class="icon icon-edit" title="重命名"></i>
+									<i class="icon icon-delete" title="删除"></i>
+								</span>
+							</li>
+							
 						</ul>
 					</div>
 				</div>
@@ -79,20 +107,35 @@
 
 					<!-- 配置文件包含图片(base64)和分组坐标 -->
 					<div class="content options">
-						<!-- 先判断是否有图片，有的话弹窗：上传成功后清除当前数据 -->
-						<button>上传</button>
+						<!-- 弹窗：上传成功后清除当前数据 -->
+						<p>
+							<button>打开配置</button>
+						</p>
 
 						<!-- 弹窗：是否过滤隐藏的分组 -->
-						<button>下载</button>
+						<p>
+							<button>下载配置</button>
+						</p>
 
 					</div>
 
-					<div class="content setting">
-						<!-- 是否保持原图比例、设置长宽 -->
-						<div class="size"></div>
+					<div class="content setting" style="display: none">
+						<!-- 是否保持原图比例 -->
+						<p>
+							<input id="size" type="checkbox" />
+							<label for="size">是否自定义比例</label>
+						</p>
 
-						<!-- 是否使用百分比 -->
-						<div class="unit"></div>
+						<p>
+							<label>宽度(px)：</label>
+							<input type="text" autocomplete="off" />
+						</p>
+
+						<p>
+							<label>高度(px)：</label>
+							<input type="text" autocomplete="off" />
+						</p>
+
 					</div>
 				</div>
 
