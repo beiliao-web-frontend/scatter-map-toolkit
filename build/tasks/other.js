@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const pump = require('pump');                       // 处理错误
 
 module.exports = (cb) => {
-	let stream = [
+	const stream = [
 		gulp.src([
 			'./../src/**/*',
 			'!./../src/**/*.js',
@@ -10,5 +10,6 @@ module.exports = (cb) => {
 		]),
 		gulp.dest('./../dist')
 	];
+
 	pump(stream, cb);
 };

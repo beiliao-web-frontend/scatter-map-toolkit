@@ -8,7 +8,7 @@
 html,
 body,
 .main,
-.tips {
+.index {
 	width: 100%;
 	height: 100%;
 }
@@ -23,7 +23,13 @@ body,
 	position: relative;
 	background: #282828;
 
-	.tips {
+	.hidden {
+		position: absolute;
+		top: -99999px;
+		opacity: 0;
+	}
+
+	.index {
 		position: fixed;
 		top: 0;
 		left: 0;

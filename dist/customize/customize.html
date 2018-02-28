@@ -8,19 +8,23 @@
 		<title>定制区域数据</title>
 	</head>
 	<body>
-		<div class="main">
+		<div id="main" class="main">
+
+			<div class="hidden">
+				<input id="upload-file" type="file" />
+			</div>
 
 			<!-- 提示文案 -->
-			<div class="tips">
+			<div class="index">
 
 				<div class="middle">
-					<div class="wrap upload">
+					<div id="upload-img" class="wrap upload">
 						<i class="icon icon-upload"></i>
 						<p>上传图片</p>
 					</div>
 
 					<div class="wrap open">
-						<i class="icon icon-open"></i>
+						<i id="upload-option" class="icon icon-open"></i>
 						<p>打开配置</p>
 					</div>
 				</div>
@@ -91,7 +95,7 @@
 									<i class="icon icon-delete" title="删除"></i>
 								</span>
 							</li>
-							
+
 						</ul>
 					</div>
 				</div>
@@ -141,6 +145,7 @@
 
 			</div>
 		</div>
+		<script src="/customize/lib/polyfill.min.js"></script>
 		<script src="/customize/customize.js"></script>
 	</body>
 </html>

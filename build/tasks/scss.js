@@ -6,7 +6,7 @@ const autoprefixer = require('gulp-autoprefixer');  // 自动补充前缀
 const changed = require('gulp-changed');            // 文件是否改变
 
 module.exports = (cb) => {
-	let stream = [
+	const stream = [
 		gulp.src('./../src/**/*.scss'),
 		changed('./../dist/**/*.scss'),
 		sass().on('error', sass.logError),
@@ -18,5 +18,6 @@ module.exports = (cb) => {
 		}),
 		gulp.dest('./../dist')
 	];
+
 	pump(stream, cb);
 };
