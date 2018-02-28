@@ -1,0 +1,1 @@
+{"version":3,"sources":["customize/customize.js"],"names":["test","console","log"],"mappings":"AAAA,IAAIA,KAAO,WACVC,QAAQC,IAAI,OAGbF","file":"customize.js","sourcesContent":["let test = () => {\n\tconsole.log('测试');\n};\n\ntest();\n"]}
