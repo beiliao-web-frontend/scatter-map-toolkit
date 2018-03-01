@@ -5,10 +5,10 @@ const sass = require('gulp-sass');                  // sass编译
 const autoprefixer = require('gulp-autoprefixer');  // 自动补充前缀
 const changed = require('gulp-changed');            // 文件是否改变
 
-module.exports = (cb) => {
-	const stream = [
+module.exports = () => {
+	return pump([
 		gulp.src('./../src/**/*.scss'),
-		changed('./../dist/**/*.scss'),
+		changed('./../dist/**/*.css'),
 		sass().on('error', sass.logError),
 		autoprefixer({
 			browsers: ['last 2 versions']
@@ -17,7 +17,5 @@ module.exports = (cb) => {
 			conpatibility: 'ie8'
 		}),
 		gulp.dest('./../dist')
-	];
-
-	pump(stream, cb);
+	]);
 };

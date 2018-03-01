@@ -14,8 +14,8 @@
 				<input id="upload-file" type="file" />
 			</div>
 
-			<!-- 提示文案 -->
-			<div class="index">
+			<!-- 索引页 -->
+			<div id="index" class="index">
 
 				<div class="middle">
 					<div id="upload-img" class="wrap upload">
@@ -33,9 +33,9 @@
 
 			<!-- 操作按钮 -->
 			<div class="top">
-				<i class="icon icon-zoomin" title="放大"></i>
-				<i class="icon icon-zoomout" title="缩小"></i>
-				<i class="icon icon-img-replace" title="图片替换"></i>
+				<i id="zoom-in" class="icon icon-zoomin" title="放大"></i>
+				<i id="zoom-out" class="icon icon-zoomout" title="缩小"></i>
+				<i id="replace-img" class="icon icon-img-replace" title="图片替换"></i>
 				<i class="icon icon-online" title="在线预览"></i>
 			</div>
 
@@ -45,8 +45,8 @@
 				<div class="wrap">
 					<div class="middle">
 						<!-- 图片绘制区 -->
-						<div class="image">
-							<img src="https://s3.imgbeiliao.com/www.ibeiliao.com/assets/pages/exhibition/__/section-map/images/map.84e1acd9a8.png" />
+						<div id="canvas" class="image">
+							<img src="" />
 						</div>	
 
 					</div>
@@ -76,12 +76,12 @@
 						<ul class="list">
 							<li class="item active">
 								<span class="status">
-									<i class="icon icon-show" title="隐藏"></i>
+									<i class="js-status icon icon-show" title="隐藏"></i>
 								</span>
-								<p class="single-line" title="分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1">分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1</p>
+								<p class="js-name single-line" title="分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1">分组1分组1分组1分组1分组1分组1分组1分组1分组1分组1</p>
 								<span class="ctrl">
-									<i class="icon icon-edit" title="重命名"></i>
-									<i class="icon icon-delete" title="删除"></i>
+									<i class="js-edit icon icon-edit" title="重命名"></i>
+									<i class="js-delete icon icon-delete" title="删除"></i>
 								</span>
 							</li>
 

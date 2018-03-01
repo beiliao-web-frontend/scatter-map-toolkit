@@ -1,22 +1,24 @@
 const gulp = require('gulp');
 const pump = require('pump');                       // 处理错误
-const changed = require('gulp-changed');            // 文件是否改变
 const uglify = require('gulp-uglify');              // js压缩  
 const babel = require('gulp-babel');                // ES6转换
 const sourcemaps = require('gulp-sourcemaps');      // sourcemaps，以便调试
-const filter = require('gulp-filter');              // 文件过滤
+const browserify = require('browserify');           // 模块化打包
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 
-module.exports = (cb) => {
-	// 压缩过的文件不做处理
-	const minFilter = filter((f) => {
-		return !/\.min\.js$/.test(f.path);
-	}, {restore: true});
+module.exports = () => {
 
-	const stream = [
-		gulp.src('./../src/**/*.js'),
-		minFilter,
-		changed('./../dist/**/*.js'),
-		sourcemaps.init(),
+	const b = browserify({
+		entries: './../src/customize/customize.js',
+		debug: true
+	});
+
+	return pump([
+		b.bundle(), // 创建文件流
+		source('customize.js'), // 生成出来的文件
+		buffer(), // 由于gulp不支持stream，这里把流转成buffer
+		sourcemaps.init({loadMaps: true}),
 		babel({
 			presets: [
 				['env', { modules: false }],
@@ -25,9 +27,6 @@ module.exports = (cb) => {
 		}),
 		uglify({ ie8: true }),
 		sourcemaps.write('.'),
-		minFilter.restore,
-		gulp.dest('./../dist')
-	];
-
-	pump(stream, cb);
+		gulp.dest('./../dist/customize')
+	]);
 };

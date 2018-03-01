@@ -38,6 +38,21 @@ body,
 		text-align: center;
 		color: white;
 
+		@keyframes hide {
+			0% {
+				opacity: 1;
+			}
+
+			100% {
+				opacity: 0;
+			}
+		}
+
+		&.hide {
+			animation: hide 0.3s;
+			animation-fill-mode: forwards;
+		}
+
 		.middle {
 			position: absolute;
 			top: 50%;
@@ -99,9 +114,11 @@ body,
 		right: 253px;
 		height: 40px;
 		padding: 10px;
-		z-index: 10;
+		z-index: 20;
+		background: rgba(40, 40, 40, 0.5);
 		box-sizing: border-box;
 		text-align: right;
+		user-select: none;
 
 		.icon {
 			margin: 0 5px;
@@ -116,7 +133,7 @@ body,
 
 	.left {
 		position: absolute;
-		top: 40px;
+		top: 0;
 		left: 0;
 		right: 253px;
 		bottom: 0;
@@ -139,9 +156,6 @@ body,
 			display: inline-block;
 			background: white;
 			box-shadow: 0 0 20px #111;
-			img {
-				height: 400px;
-			}
 		}
 
 	}

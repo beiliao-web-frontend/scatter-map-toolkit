@@ -12,6 +12,7 @@
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
+    "browserify": "^16.1.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.1.0",
     "gulp-babel": "^7.0.1",
@@ -24,6 +25,8 @@
     "minimist": "^1.2.0",
     "node-sass": "^4.7.2",
     "pump": "^3.0.0",
-    "require-dir": "^1.0.0"
+    "require-dir": "^1.0.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   }
 }
