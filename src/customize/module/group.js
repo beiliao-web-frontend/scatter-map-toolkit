@@ -6,14 +6,14 @@ class Group {
 		this.children = [];
 	}
 
-	append($el) {
-		this.$el.append($el);
-		this.children.push($el);
+	append($item) {
+		this.$el.append($item.getElement());
+		this.children.push($item);
 	}
 
-	remove($el) {
+	remove($item) {
 		if (this.children.length > 1) {
-			$el.remove();
+			$item.getElement().remove();
 			this.children.splice(this.children.indexOf(this.$el), 1);	
 		}
 	}

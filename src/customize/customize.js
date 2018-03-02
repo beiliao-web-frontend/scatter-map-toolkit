@@ -9,6 +9,7 @@ const Area = require('./module/area.js');
 	
 	const uploader = new Uploader('#upload-file');
 	const canvas = new Canvas('#canvas');
+	const group = new Group('#group')
 
 	const $main = $('#main');
 	const $index = $('#index');
@@ -49,6 +50,7 @@ const Area = require('./module/area.js');
 		});
 	});
 
-	console.log(new GroupItem('测试'));
+	group.append(new GroupItem('分组1'));
+	group.append(new GroupItem('分组2').setActive());
 
 })(window, document);

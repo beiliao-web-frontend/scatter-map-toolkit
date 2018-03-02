@@ -4,7 +4,7 @@ class DOM {
 		if (/^<(\w+)\s*[\w\=\-\"]*>([\w\W]*)<\/\w+>$/.test(selector)) {
 			this.el = document.createElement('div');
 			this.html(selector);
-			this.el = this.child()[0].getElement();
+			this.el = this.el.firstChild;
 			this.els = [this.el];
 		} else if (typeof selector === 'object') {
 
@@ -100,24 +100,34 @@ class DOM {
 		return this.els;
 	}
 
-	append($el) {
-		this.el.appendChild($el.getElement());
+	append(el) {
+		if (el instanceof DOM) {
+			el = el.getElement();
+		}
+		this.el.appendChild(el);
 		return this;
 	}
 
 	remove() {
 		this.el.remove();
+		return this;
 	}
 
 	replace(el) {
-		console.log(el.getElement(), this.el)
-		this.parent().getElement().replaceChild(el.getElement(), this.el);
+		if (el instanceof DOM) {
+			el = el.getElement();
+		}
+		this.parent().getElement().replaceChild(el, this.el);
 		return this;
 	}
 
 	html(html) {
-		this.el.innerHTML = html;
-		return this;
+		if (html) {
+			this.el.innerHTML = html;
+			return this;
+		} else {
+			return this.el.innerHTML;
+		}
 	}
 
 	parent() {
@@ -130,8 +140,19 @@ class DOM {
 		});
 	}
 
+	show() {
+		this.removeClass('hidden');
+		return this;
+	}
+
+	hidden() {
+		this.addClass('hidden');
+		return this;
+	}
+
 	click() {
 		this.el.click();
+		return this;
 	}
 }
 

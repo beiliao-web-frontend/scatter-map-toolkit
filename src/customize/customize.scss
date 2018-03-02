@@ -24,9 +24,9 @@ body,
 	background: #282828;
 
 	.hidden {
-		position: absolute;
-		top: -99999px;
-		opacity: 0;
+		position: fixed !important;
+		top: -99999px !important;
+		opacity: 0 !important;
 	}
 
 	.index {
@@ -220,7 +220,7 @@ body,
 				padding-left: 30px;
 				cursor: pointer;
 				&:hover {
-					padding-right: 60px;
+					padding-right: 55px;
 					background: #535353;
 
 					.ctrl {
@@ -230,6 +230,18 @@ body,
 
 				&.active {
 					background: #6b6b6b !important;
+				}
+
+				.edit-text {
+					width: 100%;
+					height: 100%;
+					background: #464646;
+					border: 0;
+					outline: none;
+					padding: 0 8px;
+					box-sizing: border-box;
+					font-size: 14px;
+					color: white;
 				}
 
 				.icon {
@@ -252,6 +264,7 @@ body,
 					color: #ccc;
 				}
 
+				.icon-submit,
 				.icon-edit {
 					width: 20px;
 					right: 30px;
