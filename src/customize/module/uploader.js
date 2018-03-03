@@ -18,26 +18,20 @@ class Uploader {
 				return false;
 			}
 
-			if (typeof self.chooseHandeler === 'function') {
-				let flag = self.chooseHandeler(file);
-				if (flag === false) {
-					this.value = '';
-					return false;
-				}
+			let flag = self.emit('choose', file);
+			if (flag === false) {
+				this.value = '';
+				return false;
 			}
 
 			let reader = new FileReader();
 
 			reader.onload = function(e) {
-				if (typeof self.successHandeler === 'function') {
-					self.successHandeler(e.target.result, e);
-				}
+					self.emit('success', e.target.result, e);
 			};
 
 			reader.onerror = function(e) {
-				if (typeof self.errorHandeler === 'function') {
-					self.errorHandeler(e);
-				}
+				self.emit('error', e);
 			};
 
 			reader.readAsDataURL(file);
@@ -47,8 +41,8 @@ class Uploader {
 	}
 
 	init() {
-		this.successHandeler = () => {};
-		this.errorHandeler = () => alert((this.options.name || '文件') + '读取错误');
+		this.successHandler = () => {};
+		this.errorHandler = () => alert((this.options.name || '文件') + '读取错误');
 		this.$el.removeAttr('accept');
 	}
 
@@ -66,18 +60,15 @@ class Uploader {
 
 	}
 
-	choose(handler) {
-		this.chooseHandeler = handler;
-	}
-
-	success(handler) {
-		this.successHandeler = handler;
+	on(event, handler) {
+		this[event + 'Handler'] = handler;
 		return this;
 	}
 
-	error(handler) {
-		this.errorHandeler = handler;
-		return this;
+	emit(event, ...params) {
+		if (typeof this[event + 'Handler'] === 'function') {
+			return this[event + 'Handler'](...params);
+		}
 	}
 }
 

@@ -71,6 +71,10 @@ class DOM {
 		return this;
 	}
 
+	hasClass(name) {
+		return this.el.classList.contains(name);
+	}
+
 	width(val) {
 		if (val) {
 			this.el.style.width = val + 'px';
@@ -130,6 +134,24 @@ class DOM {
 		}
 	}
 
+	text(str) {
+		if (str) {
+			this.el.innerText = str;
+			return this;
+		} else {
+			return this.el.innerText;
+		}
+	}
+
+	value(val) {
+		if (val) {
+			this.el.value = val;
+			return this;
+		} else {
+			return this.el.value;
+		}
+	}
+
 	parent() {
 		return new DOM(this.el.parentNode);
 	}
@@ -145,7 +167,7 @@ class DOM {
 		return this;
 	}
 
-	hidden() {
+	hide() {
 		this.addClass('hidden');
 		return this;
 	}

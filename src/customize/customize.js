@@ -18,39 +18,35 @@ const Area = require('./module/area.js');
 	const $zoomIn = $('#zoom-in');
 	const $zoomOut = $('#zoom-out');
 	const $replaceImg = $('#replace-img');
+	const $addGroup = $('#add-group');
 
-	$index.on('animationend', function() {
-		$index.remove();
-	});
+	$index.on('animationend', () => $index.remove());
 
-	$uploadImg.on('click', function() {
+	$uploadImg.on('click', () => {
 		uploader.open({
 			name: '图片',
 			accept: 'image/*'
-		}).success((data) => {
+		}).on('success', (data) => {
 			canvas.setImage(data);
 			$index.addClass('hide');
 		});
 	});
 
-	$zoomIn.on('click', function() {
-		canvas.zoomIn();
-	});
+	$zoomIn.on('click', () => canvas.zoomIn());
 
-	$zoomOut.on('click', function() {
-		canvas.zoomOut();
-	});
+	$zoomOut.on('click', () => canvas.zoomOut());
 
-	$replaceImg.on('click', function() {
+	$replaceImg.on('click', () => {
 		uploader.open({
 			name: '图片',
 			accept: 'image/*'
-		}).success((data) => {
+		}).on('success', (data) => {
 			canvas.setImage(data);
 		});
 	});
 
-	group.append(new GroupItem('分组1'));
-	group.append(new GroupItem('分组2').setActive());
+	$addGroup.on('click', () => {
+		group.append(new GroupItem());
+	}).click();
 
 })(window, document);

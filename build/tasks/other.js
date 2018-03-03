@@ -6,12 +6,12 @@ module.exports = () => {
 	return pump([
 		gulp.src([
 			'./../src/**/*',
-			'!./../src/customize/*.js',
-			'!./../src/customize/module/**/*',
+			'!./../src/**/*.js',
 			'!./../src/**/*.scss'
 		]),
 		gulp.dest('./../dist')
 	], () => {
   	fs.rmdirSync('./../dist/customize/module');
+  	fs.rmdirSync('./../dist/customize/lib');
 	});
 };

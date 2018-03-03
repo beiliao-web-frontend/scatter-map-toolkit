@@ -25,14 +25,14 @@ class Canvas {
 		this.$img.on('load', () => this.init(), true);
 	}
 
-	zoomIn() {
-		this.scale += 0.1;
+	zoomIn(count = 0.1) {
+		this.scale += count;
 		this.updateImage();
 	}
 
-	zoomOut() {
-		if (this.scale > 0.2) {
-			this.scale -= 0.1;
+	zoomOut(count = 0.1) {
+		if (this.scale > count * 2) {
+			this.scale -= count;
 			this.updateImage();
 		}
 	}
