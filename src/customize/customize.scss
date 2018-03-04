@@ -33,7 +33,7 @@ body,
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 9999;
+		z-index: 1000;
 		background: #282828;
 		text-align: center;
 		color: white;
@@ -398,6 +398,161 @@ body,
 			}
 		}
 
+	}
+
+}
+
+.toast {
+	position: fixed;
+	top: 20%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 4px;
+	padding: 0 15px;
+	line-height: 40px;
+	animation: fade-toggle 3s;
+	animation-fill-mode: forwards;
+	opacity: 0;
+	z-index: 3000;
+	font-size: 14px;
+
+	&.success {
+		background: #CDFED2;
+		border-color: #7AFF88;
+		color: #67c23a;
+	}
+
+	&.prompt {
+		background: #edf2fc;
+		border-color: #ebeef5;
+		color: #909399;
+	}
+
+	&.error {
+		background: #fef0f0;
+		border-color: #fde2e2;
+		color: #f56c6c;
+	}
+
+	i {
+		vertical-align: middle;
+		font-size: 20px;
+	}
+
+	@keyframes fade-toggle {
+		0% {
+			margin-top: -30px;
+			opacity: 0;
+		}
+
+		33.3% {
+			margin-top: 0;
+			opacity: 1;
+		}
+
+		66.6% {
+			margin-top: 0;
+			opacity: 1;
+		}
+
+		100% {
+			margin-top: -30px;
+			opacity: 0;
+		}
+	}
+
+}
+
+.popup {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+	animation-fill-mode: forwards;
+	z-index: 2000;
+
+	&.fade-in {
+		animation: fade-in 0.5s;
+	}
+
+	&.fade-out {
+		animation: fade-out 0.5s;
+	}
+
+	.box {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 345px;
+		border-radius: 4px;
+		transform: translate(-50%, -50%);
+		background: white;
+
+		.title {
+			height: 40px;
+			line-height: 40px;
+			border-bottom: 1px solid #ddd;
+			text-align: center;
+			font-weight: bold;
+			font-size: 13px;
+			color: #333;
+		}
+
+		.content {
+			min-height: 42px;
+			max-height: 200px;
+			overflow-x: hidden;
+			overflow-y: auto;
+			margin: 40px 20px 20px 20px;
+			padding-bottom: 18px;
+			line-height: 24px;
+			text-align: center;
+			font-size: 16px;
+			color: rgb(51, 51, 51);
+			box-sizing: border-box;
+		}
+
+		.btns {
+			padding-bottom: 20px;
+			text-align: center;
+			button {
+				width: 134px;
+				height: 38px;
+				border-radius: 2px;
+				border: 1px solid #ddd;
+				background: white;
+				font-size: 13px;
+				cursor: pointer;
+				&.confirm {
+					color: #26a2ff;
+				}
+				&.ml {
+					margin-left: 20px;
+				}
+			}
+		}
+
+		@keyframes fade-in {
+			0% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fade-out {
+			0% {
+				opacity: 1;
+			}
+
+			100% {
+				opacity: 0;
+			}
+		}
 	}
 
 }
