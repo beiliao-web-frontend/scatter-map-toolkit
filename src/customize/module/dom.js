@@ -1,7 +1,7 @@
 class DOM {
 
 	constructor(selector, el = document) {
-		if (/^<(\w+)\s*[\w\=\-\"]*>([\w\W]*)<\/\w+>$/.test(selector)) {
+		if (/^<\w+[\s\w\=\-\"\;]*>[\w\W]*<\/\w+>$/.test(selector)) {
 			this.el = document.createElement('div');
 			this.html(selector);
 			this.el = this.el.firstChild;
@@ -48,7 +48,7 @@ class DOM {
 	}
 
 	attr(key, value) {
-		if (value || value === 0) {
+		if (value !== undefined) {
 			this.el.setAttribute(key, value);
 			return this;
 		} else {
@@ -56,8 +56,8 @@ class DOM {
 		}
 	}
 
-	removeAttr(key, value) {
-		this.el.removeAttribute(key, value);
+	removeAttr(key) {
+		this.el.removeAttribute(key);
 		return this;
 	}
 
@@ -76,18 +76,19 @@ class DOM {
 	}
 
 	width(val) {
-		if (val) {
-			this.el.style.width = val + 'px';
-		} else {
-			return this.el.width;
-		}
+		return this.css('width', val);
 	}
 
 	height(val) {
-		if (val) {
-			this.el.style.height = val + 'px';
+		return this.css('height', val);
+	}
+
+	css(name, val) {
+		if (val !== undefined) {
+			this.el.style[name] = val;
+			return this;
 		} else {
-			return this.el.height;
+			return window.getComputedStyle(this.el)[name];
 		}
 	}
 
@@ -121,12 +122,15 @@ class DOM {
 		if (el instanceof DOM) {
 			el = el.getElement();
 		}
-		this.parent().getElement().replaceChild(el, this.el);
+		this
+		.el
+		.parentNode
+		.replaceChild(el, this.el);
 		return this;
 	}
 
 	html(html) {
-		if (html) {
+		if (html !== undefined) {
 			this.el.innerHTML = html;
 			return this;
 		} else {
@@ -135,7 +139,7 @@ class DOM {
 	}
 
 	text(str) {
-		if (str) {
+		if (str !== undefined) {
 			this.el.innerText = str;
 			return this;
 		} else {
@@ -144,7 +148,7 @@ class DOM {
 	}
 
 	value(val) {
-		if (val) {
+		if (val !== undefined) {
 			this.el.value = val;
 			return this;
 		} else {

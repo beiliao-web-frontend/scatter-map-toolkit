@@ -3,7 +3,7 @@ const popup = require('./popup.js');
 
 class GroupItem {
 	constructor() {
-		this.$el = $(`<li class="item">
+		this.$el = $(`<li class="item mark">
 			<span class="js-status status">
 				<i class="js-show icon icon-show" title="隐藏"></i>
 				<i class="js-hide icon icon-hide hidden" title="显示"></i>
@@ -45,18 +45,20 @@ class GroupItem {
 				}
 				
 			} else {
-				let flag = this.emit('status', true);
+				let flag = this.emit('status', false);
 
 				if (flag !== false) {
 					$showStatus.hide();
 					$hideStatus.show();
-					this.emit('status', false);
 				}
 			}
 
 		});
 
-		$edit.on('click', () => {
+		$edit.on('click', (e) => {
+
+			e.stopPropagation();
+
 			$edit.hide();
 			$submit.show();
 			$nameText.hide();
@@ -65,28 +67,37 @@ class GroupItem {
 				.value($nameText.text());
 		})
 
-		$submit.on('click', () => {
+		$submit.on('click', (e) => {
 
-			let flag = this.emit('rename', $nameInput.value());
+			e.stopPropagation();
+
+			let name = $nameInput.value();
+
+			let flag = this.emit('rename', name);
 
 			if (flag !== false) {
 				$edit.show();
 				$submit.hide();
+				$nameInput.hide();
 				$nameText
 					.show()
-					.text($nameInput.value())
-					.attr('title', $nameInput.value());
-				$nameInput.hide();
+					.text(name)
+					.attr('title', name);
+
+				this.name = name;
 			}
 			
 		});
 
 		$nameInput.on('blur', () => $submit.click());
 
-		$delete.on('click', () => {
+		$delete.on('click', (e) => {
+
+			e.stopPropagation();
+			
 			popup({
 				content: '是否确认删除分组，<br />删除后将不可恢复。',
-				success: () => {
+				confirm: () => {
 					this.emit('delete');
 				}
 			});

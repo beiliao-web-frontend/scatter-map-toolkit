@@ -1,26 +1,38 @@
 const $ = require('./dom.js');
+const Util = require('./util.js');
+const widthUtil = new Util();
+const heightUtil = new Util();
 
 class Canvas {
 
 	constructor(selector) {
 		this.$el = $(selector);
-		this.$img = this.$el.find('img');
+		this.$img = this.$el.find('.pic');
+		this.$areas = this.$el.find('.areas');
+
+		this.$el.on('mousedown', () => {
+			console.log(this.$el);
+		});
+	}
+
+	setGroup($group) {
+		this.$group = $group;
 	}
 
 	init() {
-		this.width = this.$img.width();
-		this.height = this.$img.height();
 		this.scale = 1;
+		this.$img.clearStyle();
+		this.width = widthUtil.toFloat(this.$img.width());
+		this.height = heightUtil.toFloat(this.$img.height());
 		this.updateImage();
 	}
 
 	updateImage() {
-		this.$img.width(this.width * this.scale);
-		this.$img.height(this.height * this.scale);
+		this.$img.width(widthUtil.toString(this.width * this.scale));
+		this.$img.height(heightUtil.toString(this.height * this.scale));
 	}
 
 	setImage(src) {
-		this.$img.clearStyle();
 		this.$img.attr('src', src);
 		this.$img.on('load', () => this.init(), true);
 	}

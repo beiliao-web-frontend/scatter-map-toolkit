@@ -4,39 +4,37 @@ class Uploader {
 
 	constructor(selector) {
 
-		let self = this;
-
 		this.$el = $(selector);
 
 		this.init();
 
-		this.$el.on('change', function() {
-			let file = this.files[0];
+		this.$el.on('change', () => {
+			let file = this.$el.getElement().files[0];
 
 			if (!file) {
-				this.value = '';
+				this.$el.value('');
 				return false;
 			}
 
-			let flag = self.emit('choose', file);
+			let flag = this.emit('choose', file);
 			if (flag === false) {
-				this.value = '';
+				this.$el.value('');
 				return false;
 			}
 
 			let reader = new FileReader();
 
-			reader.onload = function(e) {
-					self.emit('success', e.target.result, e);
+			reader.onload = (e) => {
+					this.emit('success', e.target.result, e);
 			};
 
 			reader.onerror = function(e) {
-				self.emit('error', e);
+				this.emit('error', e);
 			};
 
 			reader.readAsDataURL(file);
 
-			this.value = '';
+			this.$el.value('');
 		});
 	}
 

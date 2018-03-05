@@ -120,6 +120,13 @@ body,
 		text-align: right;
 		user-select: none;
 
+		.current {
+			float: left;
+			line-height: 20px;
+			font-size: 14px;
+			color: white;
+		}
+
 		.icon {
 			margin: 0 5px;
 			color: #888;
@@ -154,10 +161,24 @@ body,
 		}
 
 		.image {
+			position: relative;
 			display: inline-block;
 			background: white;
 			box-shadow: 0 0 20px #111;
 			margin-top: 40px;
+			.areas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				.area {
+					position: absolute;
+					z-index: 20;
+					border: 1px solid #aaa;
+					background: rgba(0, 0, 0, 0.4);
+				}
+			}
 		}
 
 	}

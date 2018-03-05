@@ -1,34 +1,44 @@
 const $ = require('./dom.js');
+const toast = require('./toast.js');
 
 class Group {
 	constructor(selector) {
 		this.$el = $(selector);
 		this.children = [];
+		this.index = 0;
 	}
 
-	initItem($item, isNew) {
-		if (isNew !== false) {
-			$item.setName('分组' + (this.length() + 1));
+	setCanvas($canvas) {
+		this.$canvas = $canvas;
+	}
+
+	initItem($item) {
+		if (!$item.getName()) {
+			$item.setName('分组' + (++this.index));
 		}
 
 		$item.on('click', () => {
-			this.chooseActive($item);
+			this.choose($item);
+		});
+
+		$item.on('delete', () => {
+			this.remove($item);
 		});
 	}
 
-	checkActive() {
-		if (!this.children.some(($temp) => {
-			return $temp.isActive();
-		})) {
-			this.children[0].setActive();
+	check() {
+		if (this.children.indexOf(this.$acitve) === -1) {
+			this.$acitve = this.children[0].setActive();
+			this.emit('activeChange', this.$acitve);
 		};
 	}
 
-	chooseActive($item) {
-		$item.setActive();
-		this.children.forEach(($temp) => {
-			if ($temp !== $item) {
-				$temp.removeActive();
+	choose($item) {
+		this.$acitve = $item.setActive();
+		this.emit('activeChange', this.$acitve);
+		this.children.forEach(($child) => {
+			if ($child !== this.$acitve) {
+				$child.removeActive();
 			}
 		});
 	}
@@ -37,18 +47,36 @@ class Group {
 		this.initItem($item);
 		this.$el.append($item.getElement());
 		this.children.push($item);
-		this.checkActive();
+		this.check();
 	}
 
 	remove($item) {
 		if (this.children.length > 1) {
 			$item.getElement().remove();
-			this.children.splice(this.children.indexOf(this.$el), 1);	
+			this.children.splice(this.children.indexOf($item), 1);
+			this.check();
+		} else {
+			toast('删除失败，至少保留一个分组', 'error');
 		}
+	}
+
+	getChildren() {
+		return this.children;
 	}
 
 	length() {
 		return this.children.length;
+	}
+
+	emit(event, ...params) {
+		if (typeof this[event + 'Handler'] === 'function') {
+			return this[event + 'Handler'](...params);
+		}
+	}
+
+	on(event, handler) {
+		this[event + 'Handler'] = handler;
+		return this;
 	}
 }
 
