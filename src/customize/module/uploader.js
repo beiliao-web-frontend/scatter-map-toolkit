@@ -25,7 +25,7 @@ class Uploader {
 			let reader = new FileReader();
 
 			reader.onload = (e) => {
-					this.emit('success', e.target.result, e);
+				this.emit('success', e.target.result, e);
 			};
 
 			reader.onerror = function(e) {
@@ -55,7 +55,6 @@ class Uploader {
 		this.$el.click();
 
 		return this;
-
 	}
 
 	on(event, handler) {

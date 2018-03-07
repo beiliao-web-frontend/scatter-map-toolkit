@@ -11,7 +11,7 @@ module.exports = () => {
 		]),
 		gulp.dest('./../dist')
 	], () => {
-  	fs.rmdirSync('./../dist/customize/module');
-  	fs.rmdirSync('./../dist/customize/lib');
+		fs.rmdirSync('./../dist/customize/module');
+		fs.rmdirSync('./../dist/customize/lib');
 	});
 };

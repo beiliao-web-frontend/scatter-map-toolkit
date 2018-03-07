@@ -4,16 +4,12 @@ let $body = $('body');
 
 let $popup = $(`<div class="popup">
 	<div class="box">
-
 		<div class="js-title title"></div>
-
 		<div class="js-content content"></div>
-
 		<div class="btns">
 			<button class="js-cancel cancel">取消</button>
 			<button class="js-confirm confirm ml">确定</button>
 		</div>
-
 	</div>
 </div>`);
 

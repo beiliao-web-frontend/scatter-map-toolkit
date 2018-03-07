@@ -19,6 +19,8 @@ class GroupItem {
 			</span>
 		</li>`);
 
+		this.areas = [];
+
 		let $status = this.$el.find('.js-status');
 		let $showStatus = this.$el.find('.js-show');
 		let $hideStatus = this.$el.find('.js-hide');
@@ -43,7 +45,7 @@ class GroupItem {
 					$showStatus.show();
 					$hideStatus.hide();
 				}
-				
+
 			} else {
 				let flag = this.emit('status', false);
 
@@ -65,7 +67,7 @@ class GroupItem {
 			$nameInput
 				.show()
 				.value($nameText.text());
-		})
+		});
 
 		$submit.on('click', (e) => {
 
@@ -86,7 +88,7 @@ class GroupItem {
 
 				this.name = name;
 			}
-			
+
 		});
 
 		$nameInput.on('blur', () => $submit.click());
@@ -94,7 +96,7 @@ class GroupItem {
 		$delete.on('click', (e) => {
 
 			e.stopPropagation();
-			
+
 			popup({
 				content: '是否确认删除分组，<br />删除后将不可恢复。',
 				confirm: () => {
@@ -129,13 +131,18 @@ class GroupItem {
 		return this;
 	}
 
-	isActive() {
-		return this.$el.hasClass('active');
-	}
-
 	removeActive() {
 		this.$el.removeClass('active');
 		return this;
+	}
+
+	append($area) {
+		this.areas.push($area.bind(this));
+		return this;
+	}
+
+	remove($area) {
+		$area.remove();
 	}
 
 	emit(event, ...params) {

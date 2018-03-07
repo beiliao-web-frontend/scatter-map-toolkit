@@ -1,6 +1,5 @@
 const childProcess = require('child_process');
 const path = require('path');
-const chalk = require('chalk');
 const type = process.argv[2];
 
 if (['dev', 'prod'].indexOf(type) !== -1) {

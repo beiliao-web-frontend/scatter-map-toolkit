@@ -1,53 +1,44 @@
 const $ = require('./dom.js');
 const toast = require('./toast.js');
 
-class Group {
+class GroupList {
 	constructor(selector) {
 		this.$el = $(selector);
 		this.children = [];
 		this.index = 0;
 	}
 
-	setCanvas($canvas) {
+	bind($canvas) {
 		this.$canvas = $canvas;
-	}
-
-	initItem($item) {
-		if (!$item.getName()) {
-			$item.setName('分组' + (++this.index));
-		}
-
-		$item.on('click', () => {
-			this.choose($item);
-		});
-
-		$item.on('delete', () => {
-			this.remove($item);
-		});
+		return this;
 	}
 
 	check() {
 		if (this.children.indexOf(this.$acitve) === -1) {
-			this.$acitve = this.children[0].setActive();
-			this.emit('activeChange', this.$acitve);
-		};
+			let $item = this.children[0];
+			this.$acitve = $item.setActive();
+			this.emit('activeChange', $item);
+		}
+		return this;
 	}
 
 	choose($item) {
 		this.$acitve = $item.setActive();
-		this.emit('activeChange', this.$acitve);
+		this.emit('activeChange', $item);
+
 		this.children.forEach(($child) => {
 			if ($child !== this.$acitve) {
 				$child.removeActive();
 			}
 		});
+		return this;
 	}
 
 	append($item) {
-		this.initItem($item);
 		this.$el.append($item.getElement());
 		this.children.push($item);
 		this.check();
+		return this;
 	}
 
 	remove($item) {
@@ -58,14 +49,7 @@ class Group {
 		} else {
 			toast('删除失败，至少保留一个分组', 'error');
 		}
-	}
-
-	getChildren() {
-		return this.children;
-	}
-
-	length() {
-		return this.children.length;
+		return this;
 	}
 
 	emit(event, ...params) {
@@ -80,4 +64,4 @@ class Group {
 	}
 }
 
-module.exports = Group;
+module.exports = GroupList;

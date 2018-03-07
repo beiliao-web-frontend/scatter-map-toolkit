@@ -14,7 +14,7 @@ $toast.on('animationend', () => {
 	$toast.remove();
 });
 
-module.exports = (str, type = "prompt") => {
+module.exports = (str, type = 'prompt') => {
 	$toast
 		.removeClass('success')
 		.removeClass('error')

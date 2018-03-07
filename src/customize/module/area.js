@@ -2,7 +2,7 @@ const $ = require('./dom.js');
 
 class Area {
 	constructor() {
-		this.$el = $(`<div class="area"></div>`);
+		this.$el = $('<div class="area"></div>');
 	}
 
 	update(data) {
@@ -10,6 +10,12 @@ class Area {
 			this[name] = data[name];
 			this.$el.css(name, data[name]);
 		}
+		return this;
+	}
+
+	bind($groupItem) {
+		this.$groupItem = $groupItem;
+		return this;
 	}
 
 }
