@@ -1,5 +1,6 @@
 const $ = require('./dom.js');
 const Util = require('./util.js');
+const Area = require('./area.js');
 
 const widthUtil = new Util();
 const heightUtil = new Util();
@@ -10,6 +11,37 @@ class Canvas {
 		this.$el = $(selector);
 		this.$img = this.$el.find('.pic');
 		this.$areas = this.$el.find('.areas');
+
+		function position(e) {
+			return {
+				x: e.pageX - this.$el.offset().left,
+				y: e.pageY - this.$el.offset().top
+			};
+		}
+
+		this.$el.on('mousedown', (e) => {
+			this.$active = new Area();
+
+			this.$active.update({
+				startX: position(e).x,
+				startY: position(e).y
+			});
+
+			this.$areas.append(this.$active);
+			this.$group.$active.append(this.$active);
+		});
+
+		this.$el.on('mousemove', (e) => {
+
+			if (!this.$active) {
+				return;
+			}
+
+		});
+
+		this.$el.on('mouseup', () => {
+			this.$active = null;
+		});
 	}
 
 	bind($group) {

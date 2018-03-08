@@ -13,11 +13,6 @@ class Area {
 		return this;
 	}
 
-	bind($groupItem) {
-		this.$groupItem = $groupItem;
-		return this;
-	}
-
 }
 
 module.exports = Area;

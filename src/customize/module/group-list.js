@@ -8,6 +8,10 @@ class GroupList {
 		this.index = 0;
 	}
 
+	getActive() {
+		return this.$acitve();
+	}
+
 	bind($canvas) {
 		this.$canvas = $canvas;
 		return this;

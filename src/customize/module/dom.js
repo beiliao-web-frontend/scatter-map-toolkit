@@ -14,9 +14,9 @@ class DOM {
 
 			} else {
 				this.el = selector;
-				this.els = [selector];	
+				this.els = [selector];
 			}
-			
+
 		} else {
 			this.els = el.querySelectorAll(selector);
 			this.el = this.els[0];
@@ -174,6 +174,13 @@ class DOM {
 	hide() {
 		this.addClass('hidden');
 		return this;
+	}
+
+	offset() {
+		return {
+			left: this.el.offsetLeft,
+			top: this.el.offsetTop
+		};
 	}
 
 	click() {
