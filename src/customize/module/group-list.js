@@ -34,9 +34,20 @@ class GroupList {
 		return this;
 	}
 
+	find(name) {
+		let $item = null;
+		this.children.some(($child) => {
+			if ($child.getName() === name) {
+				$item = $child;
+				return true;
+			}
+		});
+		return $item;
+	}
+
 	append($item) {
 		this.$el.append($item.getElement());
-		this.children.push($item);
+		this.children.push($item.setName(`分组${ ++this.index }`).bind(this));
 		this.check();
 		return this;
 	}

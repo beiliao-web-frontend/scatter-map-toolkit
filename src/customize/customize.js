@@ -54,7 +54,7 @@ const GroupItem = require('./module/group-item.js');
 	const $search = $('#search');
 	const $current = $('#current');
 
-	$groupList.setCanvas($canvas);
+	$groupList.bind($canvas);
 
 	$groupList.on('activeChange', ($item) => {
 		$current.text($item.getName());

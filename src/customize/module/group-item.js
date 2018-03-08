@@ -21,41 +21,35 @@ class GroupItem {
 
 		this.areas = [];
 
+		// 选中
+		this.$el.on('click', () => {
+			this.$group.choose(this);
+		});
+
+		// 显示和隐藏
 		let $status = this.$el.find('.js-status');
 		let $showStatus = this.$el.find('.js-show');
 		let $hideStatus = this.$el.find('.js-hide');
-
-		let $nameText = this.$el.find('.js-name');
-		let $nameInput = this.$el.find('.js-input');
-		let $edit = this.$el.find('.js-edit');
-		let $submit = this.$el.find('.js-submit');
-
-		let $delete = this.$el.find('.js-delete');
-
-		this.$el.on('click', () => this.emit('click'));
 
 		$status.on('click', (e) => {
 
 			e.stopPropagation();
 
 			if ($showStatus.hasClass('hidden')) {
-				let flag = this.emit('status', true);
-
-				if (flag !== false) {
-					$showStatus.show();
-					$hideStatus.hide();
-				}
-
+				$showStatus.show();
+				$hideStatus.hide();
 			} else {
-				let flag = this.emit('status', false);
-
-				if (flag !== false) {
-					$showStatus.hide();
-					$hideStatus.show();
-				}
+				$showStatus.hide();
+				$hideStatus.show();
 			}
 
 		});
+
+		// 标题编辑和保存
+		let $nameText = this.$el.find('.js-name');
+		let $nameInput = this.$el.find('.js-input');
+		let $edit = this.$el.find('.js-edit');
+		let $submit = this.$el.find('.js-submit');
 
 		$edit.on('click', (e) => {
 
@@ -75,36 +69,38 @@ class GroupItem {
 
 			let name = $nameInput.value();
 
-			let flag = this.emit('rename', name);
+			$edit.show();
+			$submit.hide();
+			$nameInput.hide();
+			$nameText
+				.show()
+				.text(name)
+				.attr('title', name);
 
-			if (flag !== false) {
-				$edit.show();
-				$submit.hide();
-				$nameInput.hide();
-				$nameText
-					.show()
-					.text(name)
-					.attr('title', name);
-
-				this.name = name;
-			}
+			this.name = name;
 
 		});
 
 		$nameInput.on('blur', () => $submit.click());
 
+		// 删除
+		let $delete = this.$el.find('.js-delete');
+
 		$delete.on('click', (e) => {
-
 			e.stopPropagation();
-
 			popup({
 				content: '是否确认删除分组，<br />删除后将不可恢复。',
 				confirm: () => {
-					this.emit('delete');
+					this.$group.remove(this);
 				}
 			});
 		});
 
+	}
+
+	bind($group) {
+		this.$group = $group;
+		return this;
 	}
 
 	getElement() {
@@ -126,6 +122,7 @@ class GroupItem {
 		return this;
 	}
 
+
 	setActive() {
 		this.$el.addClass('active');
 		return this;
@@ -143,17 +140,6 @@ class GroupItem {
 
 	remove($area) {
 		$area.remove();
-	}
-
-	emit(event, ...params) {
-		if (typeof this[event + 'Handler'] === 'function') {
-			return this[event + 'Handler'](...params);
-		}
-	}
-
-	on(event, handler) {
-		this[event + 'Handler'] = handler;
-		return this;
 	}
 
 }
