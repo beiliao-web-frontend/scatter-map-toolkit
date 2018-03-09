@@ -12,12 +12,12 @@ class Canvas {
 		this.$img = this.$el.find('.pic');
 		this.$areas = this.$el.find('.areas');
 
-		function position(e) {
+		let position = (e) => {
 			return {
 				x: e.pageX - this.$el.offset().left,
 				y: e.pageY - this.$el.offset().top
 			};
-		}
+		};
 
 		this.$el.on('mousedown', (e) => {
 			this.$active = new Area();
@@ -27,8 +27,8 @@ class Canvas {
 				startY: position(e).y
 			});
 
-			this.$areas.append(this.$active);
-			this.$group.$active.append(this.$active);
+			this.$areas.append(this.$active.getElement());
+			this.$group.getActive().append(this.$active);
 		});
 
 		this.$el.on('mousemove', (e) => {

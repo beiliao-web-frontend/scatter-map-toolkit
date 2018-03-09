@@ -9,7 +9,7 @@ class GroupList {
 	}
 
 	getActive() {
-		return this.$acitve();
+		return this.$acitve;
 	}
 
 	bind($canvas) {
