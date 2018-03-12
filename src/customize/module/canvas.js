@@ -12,34 +12,98 @@ class Canvas {
 		this.$img = this.$el.find('.pic');
 		this.$areas = this.$el.find('.areas');
 
-		let position = (e) => {
+		let self = this;
+
+		function position(e) {
 			return {
-				x: e.pageX - this.$el.offset().left,
-				y: e.pageY - this.$el.offset().top
+				x: e.pageX - self.$el.offset().left,
+				y: e.pageY - self.$el.offset().top
 			};
-		};
+		}
+
+		function toFloat(val) {
+			return parseFloat(val.replace('px', ''));
+		}
+
+		function toPersent(val, type) {
+			let w = toFloat(self.$el.width()); // 地图范围的宽高
+			let h = toFloat(self.$el.height()); // 地图范围的宽高
+			if (type === 'width') {
+				return (val / w * 100) + '%';
+			} else if (type === 'height') {
+				return (val / h * 100) + '%';
+			}
+		}
+
+		function update($area) {
+			if ($area.endX >= $area.startX) {
+				$area.css({
+					left: toPersent($area.startX, 'width'),
+					width: toPersent($area.endX - $area.startX, 'width')
+				});
+			} else {
+				$area.css({
+					left: toPersent($area.endX, 'width'),
+					width: toPersent($area.startX - $area.endX, 'width')
+				});
+			}
+
+			if ($area.endY >= $area.startY) {
+				$area.css({
+					top: toPersent($area.startY, 'height'),
+					height: toPersent($area.endY - $area.startY, 'height')
+				});
+			} else {
+				$area.css({
+					top: toPersent($area.endY, 'height'),
+					height: toPersent($area.startY - $area.endY, 'height')
+				});
+			}
+		}
 
 		this.$el.on('mousedown', (e) => {
-			this.$active = new Area();
+			let $area = new Area();
 
-			this.$active.update({
+			this.$active = $area;
+
+			this.$active.data({
 				startX: position(e).x,
 				startY: position(e).y
 			});
 
-			this.$areas.append(this.$active.getElement());
-			this.$group.getActive().append(this.$active);
+			this.$areas.append($area.getElement());
+			this.$group.getActive().append($area);
 		});
 
-		this.$el.on('mousemove', (e) => {
+		$(document).on('mousemove', (e) => {
 
 			if (!this.$active) {
 				return;
 			}
 
+			let pos = position(e);
+
+			if (pos.x < 0) {
+				pos.x = 0;
+			} else if (pos.x > toFloat(this.$el.width())) {
+				pos.x = toFloat(this.$el.width());
+			}
+
+			if (pos.y < 0) {
+				pos.y = 0;
+			} else if (pos.y > toFloat(this.$el.height())) {
+				pos.y = toFloat(this.$el.height());
+			}
+
+			this.$active.data({
+				endX: pos.x,
+				endY: pos.y
+			});
+
+			update(this.$active);
 		});
 
-		this.$el.on('mouseup', () => {
+		$(document).on('mouseup', () => {
 			this.$active = null;
 		});
 	}

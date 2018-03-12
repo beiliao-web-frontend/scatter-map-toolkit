@@ -147,6 +147,7 @@ body,
 		overflow: auto;
 		font-size: 0;
 		z-index: 10;
+		user-select: none;
 
 		.wrap {
 			width: 100%;
@@ -178,6 +179,12 @@ body,
 					z-index: 20;
 					border: 1px solid #aaa;
 					background: rgba(0, 0, 0, 0.4);
+					box-sizing: border-box;
+					transition: background 0.3s;
+					cursor: pointer;
+					&:hover {
+						background: rgba(0, 0, 0, 0.3)
+					}
 				}
 			}
 		}
