@@ -2,7 +2,15 @@ const $ = require('./dom.js');
 
 class Area {
 	constructor() {
-		this.$el = $('<div class="area"></div>');
+		this.$el = $(`<div class="area">
+			<i class="icon icon-error"></i>
+		</div>`);
+
+		this.$el
+			.find('.icon')
+			.on('click', (e) => {
+				this.$groupItem.remove(this);
+			});
 	}
 
 	bind($groupItem) {
@@ -12,6 +20,11 @@ class Area {
 
 	getElement() {
 		return this.$el;
+	}
+
+	remove() {
+		this.$el.remove();
+		return this;
 	}
 
 	data(data) {

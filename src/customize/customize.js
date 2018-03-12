@@ -66,7 +66,7 @@ const GroupItem = require('./module/group-item.js');
 
 	$search.on('input', () => {
 		$groupList.children.forEach(($child) => {
-			if ($child.getName().indexOf($search.value()) === -1) {
+			if ($child.getName().indexOf($search.value()) !== -1) {
 				$child.getElement().show();
 			} else {
 				$child.getElement().hide();

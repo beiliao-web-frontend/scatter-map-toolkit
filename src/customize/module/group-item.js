@@ -1,4 +1,5 @@
 const $ = require('./dom.js');
+const toast = require('./toast.js');
 const popup = require('./popup.js');
 
 class GroupItem {
@@ -38,9 +39,15 @@ class GroupItem {
 			if ($showStatus.hasClass('hidden')) {
 				$showStatus.show();
 				$hideStatus.hide();
+				this.areas.forEach(($area) => {
+					$area.getElement().show();
+				});
 			} else {
 				$showStatus.hide();
 				$hideStatus.show();
+				this.areas.forEach(($area) => {
+					$area.getElement().hide();
+				});
 			}
 
 		});
@@ -69,6 +76,13 @@ class GroupItem {
 
 			let name = $nameInput.value();
 
+			let $item = this.$group.find(name);
+
+			if ($item && $item !== this) {
+				toast('名称已存在', 'error');
+				name = $nameText.text();
+			}
+
 			$edit.show();
 			$submit.hide();
 			$nameInput.hide();
@@ -92,6 +106,9 @@ class GroupItem {
 				content: '是否确认删除分组，<br />删除后将不可恢复。',
 				confirm: () => {
 					this.$group.remove(this);
+					this.areas.forEach(($area) => {
+						$area.remove();
+					});
 				}
 			});
 		});
@@ -139,6 +156,7 @@ class GroupItem {
 	}
 
 	remove($area) {
+		this.areas.splice(this.areas.indexOf($area), 1);
 		$area.remove();
 	}
 

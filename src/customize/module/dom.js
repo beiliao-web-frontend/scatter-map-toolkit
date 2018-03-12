@@ -183,6 +183,14 @@ class DOM {
 		};
 	}
 
+	scrollLeft() {
+		return this.el.scrollLeft;
+	}
+
+	scrollTop() {
+		return this.el.scrollTop;
+	}
+
 	click() {
 		this.el.click();
 		return this;

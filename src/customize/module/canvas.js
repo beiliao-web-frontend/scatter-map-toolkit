@@ -9,6 +9,7 @@ class Canvas {
 
 	constructor(selector) {
 		this.$el = $(selector);
+		this.$container = $('#container');
 		this.$img = this.$el.find('.pic');
 		this.$areas = this.$el.find('.areas');
 
@@ -16,8 +17,8 @@ class Canvas {
 
 		function position(e) {
 			return {
-				x: e.pageX - self.$el.offset().left,
-				y: e.pageY - self.$el.offset().top
+				x: e.pageX + self.$container.scrollLeft() - self.$el.offset().left,
+				y: e.pageY + self.$container.scrollTop() - self.$el.offset().top
 			};
 		}
 
@@ -36,16 +37,24 @@ class Canvas {
 		}
 
 		function update($area) {
+			let position = {};
+
 			if ($area.endX >= $area.startX) {
 				$area.css({
 					left: toPersent($area.startX, 'width'),
 					width: toPersent($area.endX - $area.startX, 'width')
 				});
+
+				position.startX = toPersent($area.startX, 'width');
+				position.endX = toPersent($area.endX, 'width');
 			} else {
 				$area.css({
 					left: toPersent($area.endX, 'width'),
 					width: toPersent($area.startX - $area.endX, 'width')
 				});
+
+				position.startX = toPersent($area.endX, 'width');
+				position.endX = toPersent($area.startX, 'width');
 			}
 
 			if ($area.endY >= $area.startY) {
@@ -53,26 +62,38 @@ class Canvas {
 					top: toPersent($area.startY, 'height'),
 					height: toPersent($area.endY - $area.startY, 'height')
 				});
+
+				position.startY = toPersent($area.startY, 'height');
+				position.endY = toPersent($area.endY, 'height');
 			} else {
 				$area.css({
 					top: toPersent($area.endY, 'height'),
 					height: toPersent($area.startY - $area.endY, 'height')
 				});
+
+				position.startX = toPersent($area.endY, 'height');
+				position.endX = toPersent($area.startY, 'height');
 			}
+
+			$area.data({ position });
 		}
 
 		this.$el.on('mousedown', (e) => {
-			let $area = new Area();
 
-			this.$active = $area;
+			if (e.button === 0 && e.target === this.$areas.getElement()) {
+				let $area = new Area();
 
-			this.$active.data({
-				startX: position(e).x,
-				startY: position(e).y
-			});
+				this.$active = $area;
 
-			this.$areas.append($area.getElement());
-			this.$group.getActive().append($area);
+				this.$active.data({
+					startX: position(e).x,
+					startY: position(e).y
+				});
+
+				this.$areas.append($area.getElement());
+				this.$group.getActive().append($area);
+			}
+
 		});
 
 		$(document).on('mousemove', (e) => {

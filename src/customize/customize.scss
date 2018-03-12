@@ -164,7 +164,12 @@ body,
 		.image {
 			position: relative;
 			display: inline-block;
-			background: white;
+			background-size: 30px 30px;
+			background-color: #ECECEC;
+			background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent),
+												linear-gradient(-45deg, #fff 25%, transparent 25%, transparent),
+												linear-gradient(45deg, transparent 75%, #fff 75%),
+												linear-gradient(-45deg, transparent 75%, #fff 75%);
 			box-shadow: 0 0 20px #111;
 			margin-top: 40px;
 			cursor: crosshair;
@@ -181,9 +186,25 @@ body,
 					background: rgba(0, 0, 0, 0.4);
 					box-sizing: border-box;
 					transition: background 0.3s;
-					cursor: pointer;
+					cursor: default;
 					&:hover {
-						background: rgba(0, 0, 0, 0.3)
+						background: rgba(0, 0, 0, 0.3);
+						z-index: 999;
+						.icon {
+							display: block;
+						}
+					}
+					.icon {
+						position: absolute;
+						top: 0;
+						right: 0;
+						transform: translate(50%, -50%);
+						font-size: 20px;
+						color: white;
+						z-index: 30;
+						display: none;
+						cursor: pointer;
+						text-shadow: 0 0 6px #333;
 					}
 				}
 			}
