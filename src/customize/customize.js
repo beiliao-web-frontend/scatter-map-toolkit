@@ -74,4 +74,52 @@ const GroupItem = require('./module/group-item.js');
 		});
 	});
 
+	/* 标签页切换 */
+	const $tabs = $('#tabs');
+
+	$tabs.find('.tab-item').each((el) => {
+		let $tab = $(el);
+		$tab.on('click', () => {
+			let content = $('#' + $tab.attr('data-type'));
+			content
+				.show()
+				.siblings()
+				.forEach(($item) => {
+					$item.hide();
+				});
+
+			$tab
+				.addClass('active')
+				.siblings()
+				.forEach(($item) => {
+					$item.removeClass('active');
+				});
+		});
+	});
+
+	/* 尺寸 */
+	const $size = $('#size');
+	const $sizeWidth = $('#sizeWidth');
+	const $sizeHeight = $('#sizeHeight');
+
+	$size.on('change', () => {
+		if ($size.isChecked()) {
+			$sizeWidth
+				.removeAttr('disabled');
+			$sizeHeight
+				.removeAttr('disabled');
+		} else {
+			$sizeWidth
+				.attr('disabled', 'disabled');
+			$sizeHeight
+				.attr('disabled', 'disabled');
+		}
+	});
+
+	$canvas.on('load', () => {
+		$sizeWidth.value($canvas.data('width'));
+		$sizeWidth.current = $canvas.data('width');
+		$sizeHeight.value($canvas.data('height'));
+	});
+
 })();

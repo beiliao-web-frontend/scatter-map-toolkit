@@ -445,6 +445,9 @@ body,
 				padding: 0 5px;
 				outline: none;
 				color: white;
+				&[disabled] {
+					cursor: not-allowed;
+				}
 			}
 		}
 

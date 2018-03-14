@@ -85,43 +85,46 @@
 				<div class="control group">
 
 					<!-- 标签页 -->
-					<div class="tabs">
-						<div class="tab-item active">配置文件</div>
-						<div class="tab-item">设置</div>
+					<div id="tabs" class="tabs">
+						<div class="tab-item active" data-type="options">配置文件</div>
+						<div class="tab-item" data-type="setting">设置</div>
 					</div>
 
-					<!-- 配置文件包含图片(base64)和分组坐标 -->
-					<div class="content options">
-						<!-- 弹窗：上传成功后清除当前数据 -->
-						<p>
-							<button>打开配置</button>
-						</p>
+					<div class="contents">
+						<!-- 配置文件包含图片(base64)和分组坐标 -->
+						<div id="options" class="content options">
+							<!-- 弹窗：上传成功后清除当前数据 -->
+							<p>
+								<button>打开配置</button>
+							</p>
 
-						<!-- 弹窗：是否过滤隐藏的分组 -->
-						<p>
-							<button>下载配置</button>
-						</p>
+							<!-- 弹窗：是否过滤隐藏的分组 -->
+							<p>
+								<button>下载配置</button>
+							</p>
 
+						</div>
+
+						<div id="setting" class="content setting hidden">
+							<!-- 是否保持原图比例 -->
+							<p>
+								<input id="size" type="checkbox" />
+								<label for="size">是否自定义尺寸</label>
+							</p>
+
+							<p>
+								<label>宽度(px)：</label>
+								<input id="sizeWidth" type="text" autocomplete="off" disabled/>
+							</p>
+
+							<p>
+								<label>高度(px)：</label>
+								<input id="sizeHeight" type="text" autocomplete="off" disabled/>
+							</p>
+
+						</div>
 					</div>
-
-					<div class="content setting" style="display: none">
-						<!-- 是否保持原图比例 -->
-						<p>
-							<input id="size" type="checkbox" />
-							<label for="size">是否自定义比例</label>
-						</p>
-
-						<p>
-							<label>宽度(px)：</label>
-							<input type="text" autocomplete="off" />
-						</p>
-
-						<p>
-							<label>高度(px)：</label>
-							<input type="text" autocomplete="off" />
-						</p>
-
-					</div>
+					
 				</div>
 
 			</div>

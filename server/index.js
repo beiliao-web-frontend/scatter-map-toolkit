@@ -25,6 +25,8 @@ http.createServer((req, res) => {
 		path.join(basePath, pathName) : // 如果是文件
 		route[pathName]; // 如果是页面
 
+	filePath = filePath || '';
+
 	let type = filePath.slice(filePath.lastIndexOf('.') + 1); // 获取访问资源后缀名
 	res.writeHead(200, {
 		'Content-Type': contentTypes[type] || 'application/octet-stream'

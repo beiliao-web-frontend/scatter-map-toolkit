@@ -160,9 +160,15 @@ class DOM {
 		return new DOM(this.el.parentNode);
 	}
 
-	child() {
+	children() {
 		return [...this.el.children].map((el) => {
 			return new DOM(el);
+		});
+	}
+
+	siblings() {
+		return this.parent().children().filter(($item) => {
+			return $item.getElement() !== this.el;
 		});
 	}
 
@@ -194,6 +200,10 @@ class DOM {
 	click() {
 		this.el.click();
 		return this;
+	}
+
+	isChecked() {
+		return this.el.checked;
 	}
 }
 

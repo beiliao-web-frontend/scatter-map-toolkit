@@ -139,7 +139,6 @@ class GroupItem {
 		return this;
 	}
 
-
 	setActive() {
 		this.$el.addClass('active');
 		return this;

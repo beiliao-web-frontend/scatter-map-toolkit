@@ -71,8 +71,8 @@ class Canvas {
 					height: toPersent($area.startY - $area.endY, 'height')
 				});
 
-				position.startX = toPersent($area.endY, 'height');
-				position.endX = toPersent($area.startY, 'height');
+				position.startY = toPersent($area.endY, 'height');
+				position.endY = toPersent($area.startY, 'height');
 			}
 
 			$area.data({ position });
@@ -139,8 +139,13 @@ class Canvas {
 		this.$img.clearStyle();
 		this.width = widthUtil.toFloat(this.$img.width());
 		this.height = heightUtil.toFloat(this.$img.height());
+		this.emit('load');
 		this.update();
 		return this;
+	}
+
+	data(key) {
+		return this[key];
 	}
 
 	update() {
@@ -167,6 +172,17 @@ class Canvas {
 			this.update();
 		}
 		return this;
+	}
+
+	on(event, handler) {
+		this[event + 'Handler'] = handler;
+		return this;
+	}
+
+	emit(event, ...params) {
+		if (typeof this[event + 'Handler'] === 'function') {
+			return this[event + 'Handler'](...params);
+		}
 	}
 
 }

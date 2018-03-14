@@ -50,8 +50,12 @@ class GroupList {
 	}
 
 	append($item) {
+		if (!$item.getName()) {
+			$item.setName(`分组${ ++this.index }`);
+		}
+
 		this.$el.append($item.getElement());
-		this.children.push($item.setName(`分组${ ++this.index }`).bind(this));
+		this.children.push($item.bind(this));
 		this.check();
 		return this;
 	}

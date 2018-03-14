@@ -8,7 +8,7 @@ class Area {
 
 		this.$el
 			.find('.icon')
-			.on('click', (e) => {
+			.on('click', () => {
 				this.$groupItem.remove(this);
 			});
 	}
