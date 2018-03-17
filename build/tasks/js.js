@@ -19,7 +19,11 @@ module.exports = () => {
 	return pump([
 		eslint(config),
 		eslint.formatEach('compact', process.stderr),
-		b.bundle(), // 创建文件流
+		b.bundle((err) => {
+			if (err) {
+				throw err; // 抛出异常
+			}
+		}), // 创建文件流
 		source('customize.js'), // 生成出来的文件
 		buffer(), // 由于gulp不支持stream，这里把流转成buffer
 		sourcemaps.init({

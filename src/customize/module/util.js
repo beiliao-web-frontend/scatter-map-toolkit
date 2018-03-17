@@ -1,13 +1,12 @@
 class Util {
 	toFloat(str) {
-		str.match(/^(\d+)([a-zA-Z]*)$/);
-		this.unit = RegExp.$2;
-		return RegExp.$1;
+		let result = str.match(/\d+/g);
+		return parseFloat(result && (result.length > 1 ? result : result[0]));
 	}
 
-	toString(num) {
-		return num + this.unit;
+	toString(num, unit) {
+		return num + unit;
 	}
 }
 
-module.exports = Util;
+module.exports = new Util();

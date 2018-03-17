@@ -1,12 +1,12 @@
 const $ = require('./dom.js');
 
-class Area {
+class Area extends $.class {
 	constructor() {
-		this.$el = $(`<div class="area">
+		super(`<div class="area">
 			<i class="icon icon-error"></i>
 		</div>`);
 
-		this.$el
+		this
 			.find('.icon')
 			.on('click', () => {
 				this.$groupItem.remove(this);
@@ -18,25 +18,9 @@ class Area {
 		return this;
 	}
 
-	getElement() {
-		return this.$el;
-	}
-
-	remove() {
-		this.$el.remove();
-		return this;
-	}
-
 	data(data) {
 		for (let name in data) {
 			this[name] = data[name];
-		}
-		return this;
-	}
-
-	css(data) {
-		for (let name in data) {
-			this.$el.css(name, data[name]);
 		}
 		return this;
 	}

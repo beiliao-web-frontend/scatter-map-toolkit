@@ -1,38 +1,27 @@
 const $ = require('./dom.js');
-const Util = require('./util.js');
+const util = require('./util.js');
 const Area = require('./area.js');
 
-const widthUtil = new Util();
-const heightUtil = new Util();
 
-class Canvas {
+class Canvas extends $.class {
 
-	constructor(selector) {
-		this.$el = $(selector);
-		this.$container = $('#container');
-		this.$img = this.$el.find('.pic');
-		this.$areas = this.$el.find('.areas');
+	constructor(selector, container) {
+
+		super(selector);
+
+		this.$container = $(container);
+		this.$img = this.find('.pic');
+		this.$areas = this.find('.areas');
 
 		let self = this;
 
-		function position(e) {
-			return {
-				x: e.pageX + self.$container.scrollLeft() - self.$el.offset().left,
-				y: e.pageY + self.$container.scrollTop() - self.$el.offset().top
-			};
-		}
-
-		function toFloat(val) {
-			return parseFloat(val.replace('px', ''));
-		}
-
 		function toPersent(val, type) {
-			let w = toFloat(self.$el.width()); // 地图范围的宽高
-			let h = toFloat(self.$el.height()); // 地图范围的宽高
+			let w = util.toFloat(self.width()); // 地图范围的宽高
+			let h = util.toFloat(self.height()); // 地图范围的宽高
 			if (type === 'width') {
-				return (val / w * 100) + '%';
+				return util.toString(val / w * 100, '%');
 			} else if (type === 'height') {
-				return (val / h * 100) + '%';
+				return util.toString(val / h * 100, '%');
 			}
 		}
 
@@ -78,19 +67,19 @@ class Canvas {
 			$area.data({ position });
 		}
 
-		this.$el.on('mousedown', (e) => {
+		this.on('mousedown', (e) => {
 
-			if (e.button === 0 && e.target === this.$areas.getElement()) {
+			if (e.button === 0 && e.target === this.$areas.get(0)) {
 				let $area = new Area();
 
-				this.$active = $area;
+				this.$currentArea = $area;
 
-				this.$active.data({
-					startX: position(e).x,
-					startY: position(e).y
+				this.$currentArea.data({
+					startX: this.getAbs().x,
+					startY: this.getAbs().y
 				});
 
-				this.$areas.append($area.getElement());
+				this.$areas.append($area.get(0));
 				this.$group.getActive().append($area);
 			}
 
@@ -98,34 +87,41 @@ class Canvas {
 
 		$(document).on('mousemove', (e) => {
 
-			if (!this.$active) {
+			if (!this.$currentArea) {
 				return;
 			}
 
-			let pos = position(e);
+			let abs = this.getAbs();
 
-			if (pos.x < 0) {
-				pos.x = 0;
-			} else if (pos.x > toFloat(this.$el.width())) {
-				pos.x = toFloat(this.$el.width());
+			if (abs.x < 0) {
+				abs.x = 0;
+			} else if (abs.x > util.toFloat(this.width())) {
+				abs.x = util.toFloat(this.width());
 			}
 
-			if (pos.y < 0) {
-				pos.y = 0;
-			} else if (pos.y > toFloat(this.$el.height())) {
-				pos.y = toFloat(this.$el.height());
+			if (abs.y < 0) {
+				abs.y = 0;
+			} else if (abs.y > util.toFloat(this.height())) {
+				abs.y = util.toFloat(this.height());
 			}
 
-			this.$active.data({
-				endX: pos.x,
-				endY: pos.y
+			this.$currentArea.data({
+				endX: abs.x,
+				endY: abs.y
 			});
 
-			update(this.$active);
+			update(this.$currentArea);
 		});
 
 		$(document).on('mouseup', () => {
-			this.$active = null;
+
+			if (!this.$currentArea) {
+				return;
+			}
+
+			this.$currentArea.addClass('hover');
+
+			this.$currentArea = null;
 		});
 	}
 
@@ -135,12 +131,13 @@ class Canvas {
 	}
 
 	init() {
-		this.scale = 1;
-		this.$img.clearStyle();
-		this.width = widthUtil.toFloat(this.$img.width());
-		this.height = heightUtil.toFloat(this.$img.height());
-		this.emit('load');
+		this.$img.css('width', '');
+		this.$img.css('height', '');
+		this.imgScale = 1;
+		this.imgWidth = util.toFloat(this.$img.width());
+		this.imgHeight = util.toFloat(this.$img.height());
 		this.update();
+		this.emit('ready');
 		return this;
 	}
 
@@ -148,9 +145,16 @@ class Canvas {
 		return this[key];
 	}
 
+	getAbs(e = window.event) {
+		return {
+			x: e.pageX + this.$container.scrollLeft() - this.offset().left,
+			y: e.pageY + this.$container.scrollTop() - this.offset().top
+		};
+	}
+
 	update() {
-		this.$img.width(widthUtil.toString(this.width * this.scale));
-		this.$img.height(heightUtil.toString(this.height * this.scale));
+		this.$img.width(util.toString(this.imgWidth * this.imgScale));
+		this.$img.height(util.toString(this.imgHeight * this.imgScale));
 		return this;
 	}
 
@@ -161,28 +165,22 @@ class Canvas {
 	}
 
 	zoomIn(count = 0.1) {
-		this.scale += count;
+		this.imgScale += count;
 		this.update();
 		return this;
 	}
 
 	zoomOut(count = 0.1) {
-		if (this.scale > count * 2) {
-			this.scale -= count;
+		if (this.imgScale > count * 2) {
+			this.imgScale -= count;
 			this.update();
 		}
 		return this;
 	}
 
-	on(event, handler) {
-		this[event + 'Handler'] = handler;
+	ready(event, handler) {
+		this.onready = handler;
 		return this;
-	}
-
-	emit(event, ...params) {
-		if (typeof this[event + 'Handler'] === 'function') {
-			return this[event + 'Handler'](...params);
-		}
 	}
 
 }

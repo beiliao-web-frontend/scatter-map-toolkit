@@ -8,9 +8,8 @@ const GroupItem = require('./module/group-item.js');
 
 	const $uploader = new Uploader('#upload-file');
 	const $groupList = new GroupList('#group');
-	const $canvas = new Canvas('#canvas');
+	const $canvas = new Canvas('#canvas', '#container');
 
-	// const $main = $('#main');
 
 	/* 索引页 */
 	const $index = $('#index');
@@ -23,11 +22,12 @@ const GroupItem = require('./module/group-item.js');
 		$uploader.open({
 			name: '图片',
 			accept: 'image/*'
-		}).on('success', (data) => {
+		}).success((data) => {
 			$canvas.setImage(data);
 			$index.addClass('hide');
 		});
 	});
+
 
 	/* 画布操作 */
 	const $zoomIn = $('#zoom-in');
@@ -44,10 +44,11 @@ const GroupItem = require('./module/group-item.js');
 		$uploader.open({
 			name: '图片',
 			accept: 'image/*'
-		}).on('success', (data) => {
+		}).success((data) => {
 			$canvas.setImage(data);
 		});
 	});
+
 
 	/* 分组操作 */
 	const $addGroup = $('#add-group');
@@ -74,49 +75,38 @@ const GroupItem = require('./module/group-item.js');
 		});
 	});
 
+
 	/* 标签页切换 */
 	const $tabs = $('#tabs');
 
-	$tabs.find('.tab-item').each((el) => {
-		let $tab = $(el);
-		$tab.on('click', () => {
-			let content = $('#' + $tab.attr('data-type'));
-			content
-				.show()
-				.siblings()
-				.forEach(($item) => {
-					$item.hide();
-				});
+	$tabs.find('.tab-item').on('click', function() {
+		$('#' + this.data('type'))
+			.show()
+			.siblings()
+			.hide();
 
-			$tab
-				.addClass('active')
-				.siblings()
-				.forEach(($item) => {
-					$item.removeClass('active');
-				});
-		});
+		this
+			.addClass('active')
+			.siblings()
+			.removeClass('active');
 	});
+
 
 	/* 尺寸 */
 	const $size = $('#size');
 	const $sizeWidth = $('#sizeWidth');
 	const $sizeHeight = $('#sizeHeight');
+	const $sizeInput = $sizeWidth.concat($sizeHeight);
 
 	$size.on('change', () => {
-		if ($size.isChecked()) {
-			$sizeWidth
-				.removeAttr('disabled');
-			$sizeHeight
-				.removeAttr('disabled');
+		if ($size.get(0).checked) {
+			$sizeInput.removeAttr('disabled');
 		} else {
-			$sizeWidth
-				.attr('disabled', 'disabled');
-			$sizeHeight
-				.attr('disabled', 'disabled');
+			$sizeInput.attr('disabled', 'disabled');
 		}
 	});
 
-	$canvas.on('load', () => {
+	$canvas.ready(() => {
 		$sizeWidth.value($canvas.data('width'));
 		$sizeWidth.current = $canvas.data('width');
 		$sizeHeight.value($canvas.data('height'));

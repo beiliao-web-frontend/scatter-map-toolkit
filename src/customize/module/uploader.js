@@ -1,24 +1,17 @@
 const $ = require('./dom.js');
+const toast = require('./toast.js');
 
-class Uploader {
+class Uploader extends $.class {
 
 	constructor(selector) {
 
-		this.$el = $(selector);
+		super(selector);
 
-		this.init();
-
-		this.$el.on('change', () => {
-			let file = this.$el.getElement().files[0];
+		this.on('change', () => {
+			let file = this.get(0).files[0];
 
 			if (!file) {
-				this.$el.value('');
-				return false;
-			}
-
-			let flag = this.emit('choose', file);
-			if (flag === false) {
-				this.$el.value('');
+				this.value('');
 				return false;
 			}
 
@@ -28,44 +21,40 @@ class Uploader {
 				this.emit('success', e.target.result, e);
 			};
 
-			reader.onerror = function(e) {
+			reader.onerror = (e) => {
 				this.emit('error', e);
 			};
 
 			reader.readAsDataURL(file);
 
-			this.$el.value('');
+			this.value('');
 		});
-	}
 
-	init() {
-		this.successHandler = () => {};
-		this.errorHandler = () => alert((this.options.name || '文件') + '读取错误');
-		this.$el.removeAttr('accept');
+		this.onerror = () => toast((this.options.name || '文件') + '读取错误', 'error');
+
 	}
 
 	open(options) {
-		this.init();
+
 		this.options = options || {};
 
 		if (this.options.accept) {
-			this.$el.attr('accept', options.accept);
+			this.attr('accept', options.accept);
+		} else {
+			this.removeAttr('accept');
 		}
 
-		this.$el.click();
+		this.click();
 
 		return this;
 	}
 
-	on(event, handler) {
-		this[event + 'Handler'] = handler;
-		return this;
+	success(handler) {
+		this.onsuccess = handler;
 	}
 
-	emit(event, ...params) {
-		if (typeof this[event + 'Handler'] === 'function') {
-			return this[event + 'Handler'](...params);
-		}
+	error(handler) {
+		this.onerror = handler;
 	}
 }
 
