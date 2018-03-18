@@ -2,7 +2,6 @@ const $ = require('./dom.js');
 const util = require('./util.js');
 const Area = require('./area.js');
 
-
 class Canvas extends $.class {
 
 	constructor(selector, container) {
@@ -26,45 +25,43 @@ class Canvas extends $.class {
 		}
 
 		function update($area) {
-			let position = {};
 
-			if ($area.endX >= $area.startX) {
+			if ($area.data('endX') >= $area.data('startX')) {
 				$area.css({
-					left: toPersent($area.startX, 'width'),
-					width: toPersent($area.endX - $area.startX, 'width')
+					left: toPersent($area.data('startX'), 'width'),
+					width: toPersent($area.data('endX') - $area.data('startX'), 'width')
 				});
 
-				position.startX = toPersent($area.startX, 'width');
-				position.endX = toPersent($area.endX, 'width');
+				$area.data('x1', toPersent($area.data('startX'), 'width'));
+				$area.data('x2', toPersent($area.data('endX'), 'width'));
 			} else {
 				$area.css({
-					left: toPersent($area.endX, 'width'),
-					width: toPersent($area.startX - $area.endX, 'width')
+					left: toPersent($area.data('endX'), 'width'),
+					width: toPersent($area.data('startX') - $area.data('endX'), 'width')
 				});
 
-				position.startX = toPersent($area.endX, 'width');
-				position.endX = toPersent($area.startX, 'width');
+				$area.data('x1', toPersent($area.data('endX'), 'width'));
+				$area.data('x2', toPersent($area.data('startX'), 'width'));
 			}
 
-			if ($area.endY >= $area.startY) {
+			if ($area.data('endY') >= $area.data('startY')) {
 				$area.css({
-					top: toPersent($area.startY, 'height'),
-					height: toPersent($area.endY - $area.startY, 'height')
+					top: toPersent($area.data('startY'), 'height'),
+					height: toPersent($area.data('endY') - $area.data('startY'), 'height')
 				});
 
-				position.startY = toPersent($area.startY, 'height');
-				position.endY = toPersent($area.endY, 'height');
+				$area.data('y1', toPersent($area.data('startY'), 'height'));
+				$area.data('y2', toPersent($area.data('endY'), 'height'));
 			} else {
 				$area.css({
-					top: toPersent($area.endY, 'height'),
-					height: toPersent($area.startY - $area.endY, 'height')
+					top: toPersent($area.data('endY'), 'height'),
+					height: toPersent($area.data('startY') - $area.data('endY'), 'height')
 				});
 
-				position.startY = toPersent($area.endY, 'height');
-				position.endY = toPersent($area.startY, 'height');
+				$area.data('y1', toPersent($area.data('endY'), 'height'));
+				$area.data('y2', toPersent($area.data('startY'), 'height'));
 			}
 
-			$area.data({ position });
 		}
 
 		this.on('mousedown', (e) => {
@@ -79,8 +76,8 @@ class Canvas extends $.class {
 					startY: this.getAbs().y
 				});
 
-				this.$areas.append($area.get(0));
-				this.$group.getActive().append($area);
+				this.$areas.append($area);
+				this.$groupList.$currentGroup.append($area);
 			}
 
 		});
@@ -121,12 +118,30 @@ class Canvas extends $.class {
 
 			this.$currentArea.addClass('hover');
 
+			let x1 = util.toFloat(this.$currentArea.data('x1'));
+			let x2 = util.toFloat(this.$currentArea.data('x2'));
+			let y1 = util.toFloat(this.$currentArea.data('y1'));
+			let y2 = util.toFloat(this.$currentArea.data('y2'));
+
+			if (
+				x1 > 100 ||
+				x1 < 0 ||
+				x2 > 100 ||
+				x2 < 0 ||
+				y1 > 100 ||
+				y1 < 0 ||
+				y2 > 100 ||
+				y2 < 0
+			) {
+				this.$currentArea.remove().emit('delete'); // 移除非法数据
+			}
+
 			this.$currentArea = null;
 		});
 	}
 
-	bind($group) {
-		this.$group = $group;
+	bind($groupList) {
+		this.$groupList = $groupList;
 		return this;
 	}
 
@@ -141,10 +156,6 @@ class Canvas extends $.class {
 		return this;
 	}
 
-	data(key) {
-		return this[key];
-	}
-
 	getAbs(e = window.event) {
 		return {
 			x: e.pageX + this.$container.scrollLeft() - this.offset().left,
@@ -153,8 +164,8 @@ class Canvas extends $.class {
 	}
 
 	update() {
-		this.$img.width(util.toString(this.imgWidth * this.imgScale));
-		this.$img.height(util.toString(this.imgHeight * this.imgScale));
+		this.$img.width(util.toString(this.imgWidth * this.imgScale, 'px'));
+		this.$img.height(util.toString(this.imgHeight * this.imgScale, 'px'));
 		return this;
 	}
 
@@ -178,7 +189,7 @@ class Canvas extends $.class {
 		return this;
 	}
 
-	ready(event, handler) {
+	ready(handler) {
 		this.onready = handler;
 		return this;
 	}

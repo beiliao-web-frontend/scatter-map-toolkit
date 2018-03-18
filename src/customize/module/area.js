@@ -9,22 +9,11 @@ class Area extends $.class {
 		this
 			.find('.icon')
 			.on('click', () => {
-				this.$groupItem.remove(this);
+				console.log(123);
+				this.remove();
+				this.emit('delete');
 			});
 	}
-
-	bind($groupItem) {
-		this.$groupItem = $groupItem;
-		return this;
-	}
-
-	data(data) {
-		for (let name in data) {
-			this[name] = data[name];
-		}
-		return this;
-	}
-
 }
 
 module.exports = Area;

@@ -8,7 +8,7 @@ class Uploader extends $.class {
 		super(selector);
 
 		this.on('change', () => {
-			let file = this.get(0).files[0];
+			let file = this.data('files', undefined, true)[0];
 
 			if (!file) {
 				this.value('');

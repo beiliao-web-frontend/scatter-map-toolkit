@@ -1,86 +1,77 @@
 const $ = require('./dom.js');
+const util = require('./util.js');
 const toast = require('./toast.js');
+const GroupItem = require('./group-item.js');
 
-class GroupList {
+class GroupList extends $.class {
 	constructor(selector) {
-		this.$el = $(selector);
-		this.children = [];
-		this.index = 0;
-	}
+		super(selector);
 
-	getActive() {
-		return this.$acitve;
-	}
-
-	bind($canvas) {
-		this.$canvas = $canvas;
-		return this;
+		this.$groups = new GroupItem([]);
 	}
 
 	check() {
-		if (this.children.indexOf(this.$acitve) === -1) {
-			let $item = this.children[0];
-			this.$acitve = $item.setActive();
-			this.emit('activeChange', $item);
+		if (!this.$groups.hasClass('active') && this.$groups.size() > 0) {
+			let $group = this.$groups.eq(0);
+			this.$currentGroup = $group;
+			this.emit('current', $group.addClass('active'));
 		}
 		return this;
 	}
 
-	choose($item) {
-		this.$acitve = $item.setActive();
-		this.emit('activeChange', $item);
+	findByName(name) {
+		let $result = null;
 
-		this.children.forEach(($child) => {
-			if ($child !== this.$acitve) {
-				$child.removeActive();
+		this.$groups.forEach(($group) => {
+			if ($group.name === name) {
+				$result = $group;
 			}
 		});
-		return this;
+		return $result;
 	}
 
-	find(name) {
-		let $item = null;
-		this.children.some(($child) => {
-			if ($child.getName() === name) {
-				$item = $child;
-				return true;
-			}
-		});
-		return $item;
-	}
-
-	append($item) {
-		if (!$item.getName()) {
-			$item.setName(`分组${ ++this.index }`);
+	append($group) {
+		if (!util.isGroupItem($group)) {
+			return this;
 		}
 
-		this.$el.append($item.getElement());
-		this.children.push($item.bind(this));
+		for (let i = 1; !$group.name; i++) {
+			let name = '分组' + i;
+
+			if (!this.findByName(name)) {
+				$group.name = name;
+			}
+		}
+
+		$group.on('choose', () => {
+			this.$currentGroup = $group;
+			this.emit('current', $group);
+		}, true, false);
+
+		$group.on('delete', () => {
+			if (this.$groups.size() > 1) {
+				this.$groups.splice(this.$groups.index($group));
+				this.check();
+			} else {
+				toast('删除失败，至少保留一个分组', 'error');
+				return false;
+			}
+		}, true, false);
+
+		$group.on('rename', (name) => {
+			let $result = this.findByName(name);
+			if ($result && !$result.equals($group)) {
+				toast('名称已存在', 'error');
+				return false;
+			}
+		}, true, false);
+
+		super.append($group);
+		this.$groups.push($group);
 		this.check();
 		return this;
 	}
 
-	remove($item) {
-		if (this.children.length > 1) {
-			$item.getElement().remove();
-			this.children.splice(this.children.indexOf($item), 1);
-			this.check();
-		} else {
-			toast('删除失败，至少保留一个分组', 'error');
-		}
-		return this;
-	}
-
-	emit(event, ...params) {
-		if (typeof this[event + 'Handler'] === 'function') {
-			return this[event + 'Handler'](...params);
-		}
-	}
-
-	on(event, handler) {
-		this[event + 'Handler'] = handler;
-		return this;
-	}
 }
 
 module.exports = GroupList;

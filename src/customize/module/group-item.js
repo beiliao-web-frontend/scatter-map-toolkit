@@ -1,66 +1,74 @@
 const $ = require('./dom.js');
-const toast = require('./toast.js');
+const util = require('./util.js');
 const popup = require('./popup.js');
 
-class GroupItem {
-	constructor() {
-		this.$el = $(`<li class="item mark">
-			<span class="js-status status">
-				<i class="js-show icon icon-show" title="隐藏"></i>
-				<i class="js-hide icon icon-hide hidden" title="显示"></i>
+class GroupItem extends $.class {
+	constructor(seletor) {
+
+		if (seletor) {
+			super(seletor);
+			return;
+		}
+
+		super(`<li class="item mark">
+			<span class="status">
+				<i class="js-status icon icon-show" title="隐藏"></i>
 			</span>
 			
 			<p class="js-name single-line" title="分组名">分组名</p>
-			<input class="js-input edit-text hidden" autocomplete="off"/>
+			<input class="js-input edit-text" autocomplete="off" style="display: none;"/>
 
 			<span class="ctrl">
 				<i class="js-edit icon icon-edit" title="重命名"></i>
-				<i class="js-submit icon icon-submit hidden" title="确定"></i>
+				<i class="js-submit icon icon-submit" title="确定" style="display: none;"></i>
 				<i class="js-delete icon icon-delete" title="删除"></i>
 			</span>
 		</li>`);
 
-		this.areas = [];
+		let self = this;
+		this.$areas = $();
 
 		// 选中
-		this.$el.on('click', () => {
-			this.$group.choose(this);
+		let $nameText = this.find('.js-name');
+
+		$nameText.on('click', () => {
+			this
+				.addClass('active')
+				.siblings()
+				.removeClass('active');
+
+			this.emit('choose');
 		});
 
 		// 显示和隐藏
-		let $status = this.$el.find('.js-status');
-		let $showStatus = this.$el.find('.js-show');
-		let $hideStatus = this.$el.find('.js-hide');
+		let $status = this.find('.js-status');
 
-		$status.on('click', (e) => {
+		$status.on('click', function() {
 
-			e.stopPropagation();
+			if (this.hasClass('icon-show')) {
+				this
+					.addClass('icon-hide')
+					.removeClass('icon-show')
+					.attr('title', '显示')
 
-			if ($showStatus.hasClass('hidden')) {
-				$showStatus.show();
-				$hideStatus.hide();
-				this.areas.forEach(($area) => {
-					$area.getElement().show();
-				});
+				self.$areas.hide();
 			} else {
-				$showStatus.hide();
-				$hideStatus.show();
-				this.areas.forEach(($area) => {
-					$area.getElement().hide();
-				});
+				this
+					.addClass('icon-show')
+					.removeClass('icon-hide')
+					.attr('title', '显示')
+
+				self.$areas.show();
 			}
 
 		});
 
 		// 标题编辑和保存
-		let $nameText = this.$el.find('.js-name');
-		let $nameInput = this.$el.find('.js-input');
-		let $edit = this.$el.find('.js-edit');
-		let $submit = this.$el.find('.js-submit');
+		let $nameInput = this.find('.js-input');
+		let $edit = this.find('.js-edit');
+		let $submit = this.find('.js-submit');
 
-		$edit.on('click', (e) => {
-
-			e.stopPropagation();
+		$edit.on('click', () => {
 
 			$edit.hide();
 			$submit.show();
@@ -70,26 +78,20 @@ class GroupItem {
 				.value($nameText.text());
 		});
 
-		$submit.on('click', (e) => {
-
-			e.stopPropagation();
+		$submit.on('click', () => {
 
 			let name = $nameInput.value();
 
-			let $item = this.$group.find(name);
+			let flag = this.emit('rename', name);
 
-			if ($item && $item !== this) {
-				toast('名称已存在', 'error');
+			if (flag === false) {
 				name = $nameText.text();
 			}
 
 			$edit.show();
 			$submit.hide();
 			$nameInput.hide();
-			$nameText
-				.show()
-				.text(name)
-				.attr('title', name);
+			$nameText.show();
 
 			this.name = name;
 
@@ -98,65 +100,64 @@ class GroupItem {
 		$nameInput.on('blur', () => $submit.click());
 
 		// 删除
-		let $delete = this.$el.find('.js-delete');
+		let $delete = this.find('.js-delete');
 
-		$delete.on('click', (e) => {
-			e.stopPropagation();
+		$delete.on('click', () => {
 			popup({
 				content: '是否确认删除分组，<br />删除后将不可恢复。',
 				confirm: () => {
-					this.$group.remove(this);
-					this.areas.forEach(($area) => {
-						$area.remove();
-					});
+					let flag = this.emit('delete');
+					if (flag !== false) {
+						this.remove();
+						this.$areas.remove();
+					}
 				}
 			});
 		});
 
 	}
 
-	bind($group) {
-		this.$group = $group;
-		return this;
+	forEach(callback) {
+		super.each((node) => {
+			callback(new GroupItem(node));
+		});
 	}
 
-	getElement() {
-		return this.$el;
+	eq(index) {
+		return new GroupItem(super.eq(index));
 	}
 
-	getName() {
-		return this.name;
-	}
-
-	setName(name) {
-		this.name = name;
-
-		this.$el
+	set name(val) {
+		this
+			.data('name', val)
 			.find('.js-name')
-			.attr('title', name)
-			.text(name);
-
-		return this;
+			.attr('title', val)
+			.text(val);
 	}
 
-	setActive() {
-		this.$el.addClass('active');
-		return this;
+	get name() {
+		return this.data('name');
 	}
 
-	removeActive() {
-		this.$el.removeClass('active');
-		return this;
+	set $areas(val) {
+		this.data('$areas', val);
+	}
+
+	get $areas() {
+		return this.data('$areas');
 	}
 
 	append($area) {
-		this.areas.push($area.bind(this));
-		return this;
-	}
+		if (!util.isArea($area)) {
+			return this;
+		}
 
-	remove($area) {
-		this.areas.splice(this.areas.indexOf($area), 1);
-		$area.remove();
+		$area.on('delete', () => {
+			this.$areas.splice(this.$areas.index($area));
+		}, true, false);
+
+		this.$areas.push($area);
+		return this;
 	}
 
 }

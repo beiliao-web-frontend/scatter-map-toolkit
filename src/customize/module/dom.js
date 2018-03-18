@@ -1,6 +1,8 @@
+let $;
+
 class DOM {
 
-	constructor(selector, contexts = [document]) {
+	constructor(selector, contexts = document) {
 
 		if (!Array.isArray(contexts)) {
 			this.contexts = [contexts];
@@ -28,54 +30,81 @@ class DOM {
 			this.nodes = selector.filter((node) => {
 				return !!node;
 			});
-		} else {
+		} else if (selector) {
 			this.nodes = [selector];
+		} else {
+			this.nodes = [];
 		}
 
 	}
 
 	each(callback) {
-		this.nodes.forEach((node) => {
-			callback.call(new DOM(node), node);
-		});
+		this.nodes.forEach(callback);
 		return this;
 	}
 
 	filter(callback) {
-		return new DOM(this.nodes.filter(callback));
+		return $(this.nodes.filter(callback));
 	}
 
 	get(index) {
 		return this.nodes[index];
 	}
 
+	eq(index) {
+		return $(this.nodes[index])
+	}
+
 	find(selector) {
-		return new DOM(selector, this.nodes);
+		return $(selector, this.nodes);
 	}
 
 	size() {
 		return this.nodes.length;
 	}
 
-	concat(selector) {
-		return new DOM([...new DOM(selector).nodes, ...this.nodes]);
+	equals(selector) {
+		return this.nodes[0] === $(selector).nodes[0];
 	}
 
-	on(eventName, handler, isOnly) {
+	concat(selector) {
+		return $([...$(selector).nodes, ...this.nodes]);
+	}
+
+	push(selector) {
+		return this.nodes.push(...$(selector).nodes);
+	}
+
+	splice(index, count = 1, ...selector) {
+		this.nodes.splice(index, count, ...$(selector).nodes);
+		return this;
+	}
+
+	index(selector) {
+		return this.nodes.indexOf($(selector).nodes[0]);
+	}
+
+	on(eventName, handler, isOnly = false, isOrigin = true) {
 		let events = eventName.split(' ');
 		if (isOnly) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				events.forEach((event) => {
-					node['on' + event] = (e) => {
-						handler.call(new DOM(node), e);
-					};
+					if (isOrigin) {
+						node['on' + event] = function() {
+							return handler.call($(node), ...arguments)
+						};
+					} else {
+						node['_on' + event] = function() {
+							return handler.call($(node), ...arguments)
+						};
+					}
 				});
 			});
 		} else {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				events.forEach((event) => {
-					node.addEventListener(event, (e) => {
-						handler.call(new DOM(node), e);
+					node.addEventListener(event, function() {
+						handler.call($(node), ...arguments)
 					});
 				});
 			});
@@ -84,34 +113,37 @@ class DOM {
 	}
 
 	off(eventName, handler) {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			node.removeEventListener(eventName, handler);
 			node['on' + eventName] = null;
+			node['_on' + eventName] = null;
 		});
 		return this;
 	}
 
 	emit(event, ...params) {
-		if (typeof this['on' + event] === 'function') {
-			return this['on' + event](...params);
-		} else {
-			this.nodes.forEach((node) => {
-				if (typeof node['on' + event] === 'function') {
-					return node['on' + event](...params);
-				}
-			});
-		}
+		let result = [];
+		this.each((node) => {
+			if (typeof this['on' + event] === 'function') {
+				result.push(this['on' + event](...params));
+			} else if (typeof node['on' + event] === 'function') {
+				result.push(node['on' + event](...params));
+			} else if (typeof node['_on' + event] === 'function') {
+				result.push(node['_on' + event](...params));
+			}
+		});
+		return result.length > 1 ? result : result[0];
 	}
 
 	attr(key, value) {
 		if (typeof key === 'object') {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				for (let name in key) {
 					node.setAttribute(name, key[name]);
 				}
 			});
 		} else if (value !== undefined) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				node.setAttribute(key, value);
 			});
 		} else {
@@ -124,24 +156,43 @@ class DOM {
 	}
 
 	removeAttr(key) {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			node.removeAttribute(key);
 		});
 		return this;
 	}
 
-	data(key, value) {
-		key = `data-${ key }`;
-		if (value === undefined) {
-			return this.attr(key);
+	data(key, value, isOrigin = false) {
+		if (typeof key === 'object') {
+			this.each((node) => {
+				for (let name in key) {
+					if (isOrigin) {
+						node[name] = key[name];
+					} else {
+						node['_' + name] = key[name];
+					}
+				}
+			});
+		} else if (value !== undefined) {
+			this.each((node) => {
+				if (isOrigin) {
+					node[key] = value;
+				} else {
+					node['_' + key] = value;
+				}
+			});
 		} else {
-			this.attr(key, value);
-			return this;
+			if (isOrigin) {
+				return this.get(0)[key];
+			} else {
+				return this.get(0)['_' + key];
+			}
 		}
+		return this;
 	}
 
 	addClass(...names) {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			let classNames = node.className.split(' ');
 
 			names.forEach((name) => {
@@ -156,7 +207,7 @@ class DOM {
 	}
 
 	removeClass(...names) {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			let classNames = node.className.split(' ');
 
 			names.forEach((name) => {
@@ -179,19 +230,19 @@ class DOM {
 
 	css(key, val) {
 		if (typeof key === 'object') {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				for (let name in key) {
 					node.style[name] = key[name];
 				}
 			});
 		} else if (val !== undefined) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				node.style[key] = val;
 			});
 		} else if ('getComputedStyle' in window) {
-			return window.getComputedStyle(this.nodes[0])[key];
+			return window.getComputedStyle(this.get(0))[key];
 		} else {
-			return this,nodes[0].style[key];
+			return this.get(0).style[key];
 		}
 	}
 
@@ -204,8 +255,8 @@ class DOM {
 	}
 
 	append(selector) {
-		this.nodes.forEach((node) => {
-			new DOM(selector).each((n) => {
+		this.each((node) => {
+			$(selector).each((n) => {
 				node.appendChild(n);
 			})
 		});
@@ -213,64 +264,64 @@ class DOM {
 	}
 
 	remove() {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			node.remove();
 		});
 		return this;
 	}
 
 	replace(selector) {
-		this.nodes.forEach((node) => {
-			node.parentNode.replaceChild(new DOM(selector).get(0), node);
+		this.each((node) => {
+			node.parentNode.replaceChild($(selector).get(0), node);
 		});
 		return this;
 	}
 
 	html(html) {
 		if (html !== undefined) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				node.innerHTML = html;
 			});
 			return this;
 		} else {
-			return this.nodes[0].innerHTML;
+			return this.get(0).innerHTML;
 		}
 	}
 
 	text(str) {
 		if (str !== undefined) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				node.innerText = str;
 			});
 			return this;
 		} else {
-			return this.nodes[0].innerText;
+			return this.get(0).innerText;
 		}
 	}
 
 	value(val) {
 		if (val !== undefined) {
-			this.nodes.forEach((node) => {
+			this.each((node) => {
 				node.value = val;
 			});
 			return this;
 		} else {
-			return this.nodes[0].value;
+			return this.get(0).value;
 		}
 	}
 
 	parent() {
-		return new DOM(this.nodes.map((node) => {
+		return $(this.nodes.map((node) => {
 			return node.parentNode;
 		}));
 	}
 
 	children() {
 		let result = [];
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			result.push(...node.children);
 		});
-		return new DOM(result);
+		return $(result);
 	}
 
 	siblings() {
@@ -291,21 +342,21 @@ class DOM {
 
 	offset() {
 		return {
-			left: this.nodes[0].offsetLeft,
-			top: this.nodes[0].offsetTop
+			left: this.get(0).offsetLeft,
+			top: this.get(0).offsetTop
 		};
 	}
 
 	scrollLeft() {
-		return this.nodes[0].scrollLeft;
+		return this.get(0).scrollLeft;
 	}
 
 	scrollTop() {
-		return this.nodes[0].scrollTop;
+		return this.get(0).scrollTop;
 	}
 
 	click() {
-		this.nodes.forEach((node) => {
+		this.each((node) => {
 			node.click();
 		});
 		return this;
@@ -313,7 +364,13 @@ class DOM {
 
 }
 
-let $ = (selector) => new DOM(selector);
+$ = (selector, contexts) => {
+	if (selector instanceof DOM) {
+		return selector;
+	} else {
+		return new DOM(selector, contexts);
+	}
+};
 
 $.class = DOM;
 

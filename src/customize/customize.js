@@ -55,22 +55,20 @@ const GroupItem = require('./module/group-item.js');
 	const $search = $('#search');
 	const $current = $('#current');
 
-	$groupList.bind($canvas);
-
-	$groupList.on('activeChange', ($item) => {
-		$current.text($item.getName());
-	});
+	$groupList.on('current', ($group) => {
+		$current.text($group.name);
+	}, true, false);
 
 	$addGroup.on('click', () => {
 		$groupList.append(new GroupItem());
 	}).click();
 
 	$search.on('input', () => {
-		$groupList.children.forEach(($child) => {
-			if ($child.getName().indexOf($search.value()) !== -1) {
-				$child.getElement().show();
+		$groupList.$groups.forEach(($group) => {
+			if ($group.name.indexOf($search.value()) !== -1) {
+				$group.show();
 			} else {
-				$child.getElement().hide();
+				$group.hide();
 			}
 		});
 	});
@@ -80,7 +78,7 @@ const GroupItem = require('./module/group-item.js');
 	const $tabs = $('#tabs');
 
 	$tabs.find('.tab-item').on('click', function() {
-		$('#' + this.data('type'))
+		$('#' + this.attr('data-type'))
 			.show()
 			.siblings()
 			.hide();
@@ -99,17 +97,39 @@ const GroupItem = require('./module/group-item.js');
 	const $sizeInput = $sizeWidth.concat($sizeHeight);
 
 	$size.on('change', () => {
-		if ($size.get(0).checked) {
+		if ($size.data('checked', undefined, true)) {
 			$sizeInput.removeAttr('disabled');
 		} else {
+			$canvas.init();
 			$sizeInput.attr('disabled', 'disabled');
 		}
 	});
 
+	$sizeWidth.on('blur', () => {
+		let value = $sizeWidth.value();
+		if (/^\d+$/.test(value)) {
+			$sizeWidth.data('value', value);
+			$canvas.imgWidth = parseFloat(value);
+			$canvas.update();
+		} else {
+			$sizeWidth.value($sizeWidth.data('value'));
+		}
+	});
+
+	$sizeHeight.on('blur', () => {
+		let value = $sizeHeight.value();
+		if (/^\d+$/.test(value)) {
+			$sizeHeight.data('value', value);
+			$canvas.imgHeight = parseFloat(value);
+			$canvas.update();
+		} else {
+			$sizeHeight.value($sizeHeight.data('value'));
+		}
+	});
+
 	$canvas.ready(() => {
-		$sizeWidth.value($canvas.data('width'));
-		$sizeWidth.current = $canvas.data('width');
-		$sizeHeight.value($canvas.data('height'));
+		$sizeWidth.value($canvas.imgWidth).data('value', $canvas.imgWidth);
+		$sizeHeight.value($canvas.imgHeight).data('value', $canvas.imgHeight);
 	});
 
 })();
