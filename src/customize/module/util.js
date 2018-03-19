@@ -6,6 +6,9 @@ const Area = require('./area.js');
 const DOM = require('./dom.js').class;
 
 module.exports.toFloat = (str) => {
+	if (typeof str !== 'string') {
+		return;
+	}
 	let result = str.match(/\d+/g);
 	return parseFloat(result && (result.length > 1 ? result : result[0]));
 };
@@ -26,8 +29,8 @@ module.exports.isGroupItem = (object) => {
 	return object instanceof GroupItem;
 };
 
-module.exports.isGroupItem = (object) => {
-	return object instanceof GroupItem;
+module.exports.isUploader = (object) => {
+	return object instanceof Uploader;
 };
 
 module.exports.isArea = (object) => {

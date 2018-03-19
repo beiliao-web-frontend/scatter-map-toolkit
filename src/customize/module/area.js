@@ -9,7 +9,6 @@ class Area extends $.class {
 		this
 			.find('.icon')
 			.on('click', () => {
-				console.log(123);
 				this.remove();
 				this.emit('delete');
 			});

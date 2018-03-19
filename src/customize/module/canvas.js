@@ -9,8 +9,8 @@ class Canvas extends $.class {
 		super(selector);
 
 		this.$container = $(container);
-		this.$img = this.find('.pic');
-		this.$areas = this.find('.areas');
+		this.$img = this.find('.js-pic');
+		this.$areas = this.find('.js-areas');
 
 		let self = this;
 
@@ -26,47 +26,52 @@ class Canvas extends $.class {
 
 		function update($area) {
 
-			if ($area.data('endX') >= $area.data('startX')) {
+			let startX = $area.data('startX');
+			let endX = $area.data('endX');
+			let startY = $area.data('startY');
+			let endY = $area.data('endY');
+
+			if (endX >= startX) {
 				$area.css({
-					left: toPersent($area.data('startX'), 'width'),
-					width: toPersent($area.data('endX') - $area.data('startX'), 'width')
+					left: toPersent(startX, 'width'),
+					width: toPersent(endX - startX, 'width')
 				});
 
-				$area.data('x1', toPersent($area.data('startX'), 'width'));
-				$area.data('x2', toPersent($area.data('endX'), 'width'));
+				$area.data('x1', toPersent(startX, 'width'));
+				$area.data('x2', toPersent(endX, 'width'));
 			} else {
 				$area.css({
-					left: toPersent($area.data('endX'), 'width'),
-					width: toPersent($area.data('startX') - $area.data('endX'), 'width')
+					left: toPersent(endX, 'width'),
+					width: toPersent(startX - endX, 'width')
 				});
 
-				$area.data('x1', toPersent($area.data('endX'), 'width'));
-				$area.data('x2', toPersent($area.data('startX'), 'width'));
+				$area.data('x1', toPersent(endX, 'width'));
+				$area.data('x2', toPersent(startX, 'width'));
 			}
 
-			if ($area.data('endY') >= $area.data('startY')) {
+			if (endY >= startY) {
 				$area.css({
-					top: toPersent($area.data('startY'), 'height'),
-					height: toPersent($area.data('endY') - $area.data('startY'), 'height')
+					top: toPersent(startY, 'height'),
+					height: toPersent(endY - startY, 'height')
 				});
 
-				$area.data('y1', toPersent($area.data('startY'), 'height'));
-				$area.data('y2', toPersent($area.data('endY'), 'height'));
+				$area.data('y1', toPersent(startY, 'height'));
+				$area.data('y2', toPersent(endY, 'height'));
 			} else {
 				$area.css({
-					top: toPersent($area.data('endY'), 'height'),
-					height: toPersent($area.data('startY') - $area.data('endY'), 'height')
+					top: toPersent(endY, 'height'),
+					height: toPersent(startY - endY, 'height')
 				});
 
-				$area.data('y1', toPersent($area.data('endY'), 'height'));
-				$area.data('y2', toPersent($area.data('startY'), 'height'));
+				$area.data('y1', toPersent(endY, 'height'));
+				$area.data('y2', toPersent(startY, 'height'));
 			}
 
 		}
 
 		this.on('mousedown', (e) => {
-
-			if (e.button === 0 && e.target === this.$areas.get(0)) {
+			let $target = $(e.target);
+			if (e.button === 0 && !$target.hasClass('icon')) {
 				let $area = new Area();
 
 				this.$currentArea = $area;
@@ -77,12 +82,13 @@ class Canvas extends $.class {
 				});
 
 				this.$areas.append($area);
+
 				this.$groupList.$currentGroup.append($area);
 			}
 
 		});
 
-		$(document).on('mousemove', (e) => {
+		$(document).on('mousemove', () => {
 
 			if (!this.$currentArea) {
 				return;
@@ -123,16 +129,11 @@ class Canvas extends $.class {
 			let y1 = util.toFloat(this.$currentArea.data('y1'));
 			let y2 = util.toFloat(this.$currentArea.data('y2'));
 
-			if (
-				x1 > 100 ||
-				x1 < 0 ||
-				x2 > 100 ||
-				x2 < 0 ||
-				y1 > 100 ||
-				y1 < 0 ||
-				y2 > 100 ||
-				y2 < 0
-			) {
+			function isError(count) {
+				return count === undefined || count > 100 || count < 0;
+			}
+
+			if (isError(x1) || isError(x2) || isError(y1) || isError(y2)) {
 				this.$currentArea.remove().emit('delete'); // 移除非法数据
 			}
 

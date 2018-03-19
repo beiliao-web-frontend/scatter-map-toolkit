@@ -43,6 +43,10 @@ class DOM {
 		return this;
 	}
 
+	map(callback) {
+		return this.nodes.map(callback);
+	}
+
 	filter(callback) {
 		return $(this.nodes.filter(callback));
 	}
@@ -52,7 +56,7 @@ class DOM {
 	}
 
 	eq(index) {
-		return $(this.nodes[index])
+		return $(this.nodes[index]);
 	}
 
 	find(selector) {
@@ -91,11 +95,11 @@ class DOM {
 				events.forEach((event) => {
 					if (isOrigin) {
 						node['on' + event] = function() {
-							return handler.call($(node), ...arguments)
+							return handler.call($(node), ...arguments);
 						};
 					} else {
 						node['_on' + event] = function() {
-							return handler.call($(node), ...arguments)
+							return handler.call($(node), ...arguments);
 						};
 					}
 				});
@@ -104,7 +108,7 @@ class DOM {
 			this.each((node) => {
 				events.forEach((event) => {
 					node.addEventListener(event, function() {
-						handler.call($(node), ...arguments)
+						handler.call($(node), ...arguments);
 					});
 				});
 			});
@@ -258,7 +262,7 @@ class DOM {
 		this.each((node) => {
 			$(selector).each((n) => {
 				node.appendChild(n);
-			})
+			});
 		});
 		return this;
 	}

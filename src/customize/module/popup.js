@@ -41,6 +41,10 @@ module.exports = (options = {}) => {
 
 	$content.html(options.content || '');
 
+	if (options.cancelText) {
+		$cancel.text(options.cancelText);
+	}
+
 	$cancel.on('click', () => {
 		if (typeof options.cancel === 'function') {
 			let flag = options.cancel();
@@ -50,6 +54,10 @@ module.exports = (options = {}) => {
 		}
 		$popup.addClass('fade-out');
 	}, true);
+
+	if (options.confirmText) {
+		$confirm.text(options.confirmText);
+	}
 
 	$confirm.on('click', () => {
 		if (typeof options.confirm === 'function') {

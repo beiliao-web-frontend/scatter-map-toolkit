@@ -49,15 +49,17 @@ class GroupItem extends $.class {
 				this
 					.addClass('icon-hide')
 					.removeClass('icon-show')
-					.attr('title', '显示')
+					.attr('title', '显示');
 
+				self.isShow = false;
 				self.$areas.hide();
 			} else {
 				this
 					.addClass('icon-show')
 					.removeClass('icon-hide')
-					.attr('title', '显示')
+					.attr('title', '显示');
 
+				self.isShow = true;
 				self.$areas.show();
 			}
 
@@ -136,7 +138,19 @@ class GroupItem extends $.class {
 	}
 
 	get name() {
+		if (this.size() > 1) {
+			return '';
+		}
 		return this.data('name');
+	}
+
+	set isShow(val) {
+		this.data('isShow', val);
+	}
+
+	get isShow() {
+		let result = this.data('isShow');
+		return result === undefined ? true : result;
 	}
 
 	set $areas(val) {
@@ -144,6 +158,9 @@ class GroupItem extends $.class {
 	}
 
 	get $areas() {
+		if (this.size() > 1) {
+			return $();
+		}
 		return this.data('$areas');
 	}
 

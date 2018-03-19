@@ -186,7 +186,6 @@ body,
 					background: rgba(0, 0, 0, 0.4);
 					box-sizing: border-box;
 					transition: background 0.3s;
-					cursor: default;
 					&.hover:hover {
 						background: rgba(0, 0, 0, 0.3);
 						z-index: 999;
@@ -416,6 +415,7 @@ body,
 					font-size: 14px;
 					color: white;
 					cursor: pointer;
+					outline: none;
 					&:hover {
 						background: #555;
 					}
@@ -461,6 +461,7 @@ body,
 	left: 50%;
 	transform: translate(-50%, -50%);
 	border-radius: 4px;
+	border: 1px solid transparent;
 	padding: 0 15px;
 	line-height: 40px;
 	animation: fade-toggle 3s;
@@ -578,6 +579,7 @@ body,
 				background: white;
 				font-size: 13px;
 				cursor: pointer;
+				outline: none;
 				&.confirm {
 					color: #26a2ff;
 				}

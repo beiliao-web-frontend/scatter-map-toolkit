@@ -23,8 +23,8 @@
 						<p>上传图片</p>
 					</div>
 
-					<div class="wrap open">
-						<i id="upload-option" class="icon icon-open"></i>
+					<div id="upload-option" class="wrap open">
+						<i class="icon icon-open"></i>
 						<p>打开配置</p>
 					</div>
 				</div>
@@ -47,8 +47,8 @@
 					<div class="middle">
 						<!-- 图片绘制区 -->
 						<div id="canvas" class="image">
-							<img class="pic" />
-							<div class="areas"></div>
+							<img class="js-pic pic" />
+							<div class="js-areas areas"></div>
 						</div>	
 
 					</div>
@@ -95,12 +95,11 @@
 						<div id="options" class="content options">
 							<!-- 弹窗：上传成功后清除当前数据 -->
 							<p>
-								<button>打开配置</button>
+								<button class="js-upload">加载配置</button>
 							</p>
 
-							<!-- 弹窗：是否过滤隐藏的分组 -->
 							<p>
-								<button>下载配置</button>
+								<button class="js-download">下载配置</button>
 							</p>
 
 						</div>
