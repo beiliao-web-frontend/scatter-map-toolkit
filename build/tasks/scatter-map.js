@@ -23,8 +23,11 @@ module.exports = () => {
 			]
 		}),
 		uglify({ ie8: true }),
+		rename({
+			basename: 'scatter-map',
+			extname: '.min.js'
+		}),
 		sourcemaps.write('.'),
-		rename({ extname: '.min.js' }),
 		gulp.dest(destPath)
 	]);
 };

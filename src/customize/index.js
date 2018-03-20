@@ -127,6 +127,45 @@ const Area = require('./module/area.js');
 		});
 	}
 
+	function getOptions($groupList) {
+
+		let params = {};
+
+		if ($size.data('checked', undefined, true)) {
+			params.resize = true;
+			params.width = $canvas.imgWidth;
+			params.height = $canvas.imgHeight;
+		}
+
+		let result = {};
+		$groupList.$groups.forEach(($group) => {
+			result[$group.name] = {
+				isShow: $group.isShow,
+				areas: $group.$areas.map((area) => {
+					let $area = $(area);
+					return {
+						x1: $area.data('x1'),
+						x2: $area.data('x2'),
+						y1: $area.data('y1'),
+						y2: $area.data('y2')
+					};
+				})
+			};
+		});
+
+		let image = $canvas.getImage();
+
+		if (!/^http(s)?:\/\//.test(image)) {
+			image = '';
+		}
+
+		return {
+			image,
+			data: result,
+			setting: params
+		};
+	}
+
 	$index.on('animationend', () => $index.remove());
 
 	$uploadImg.on('click', () => {
@@ -153,6 +192,7 @@ const Area = require('./module/area.js');
 	const $zoomIn = $('#zoom-in');
 	const $zoomOut = $('#zoom-out');
 	const $replaceImg = $('#replace-img');
+	const $preview = $('#preview');
 
 	$canvas.bind($groupList);
 
@@ -166,6 +206,22 @@ const Area = require('./module/area.js');
 			accept: 'image/*'
 		}).success((data) => {
 			$canvas.setImage(data);
+		});
+	});
+
+	$preview.on('click', () => {
+		ajax('/save', 'POST', getOptions($groupList), (res) => {
+			try {
+				let resData = JSON.parse(res.responseText);
+				if (resData.errcode === 200) {
+					window.open('/example');
+				} else {
+					toast(resData.errmsg, 'error');
+				}
+			} catch (e) {
+				toast('数据格式非JSON', 'error');
+				throw new Error('数据格式非JSON');
+			}
 		});
 	});
 
@@ -253,47 +309,9 @@ const Area = require('./module/area.js');
 	let $optionsUpload = $options.find('.js-upload');
 	let $optionsDownload = $options.find('.js-download');
 
-	function getOptions($groupList, params) {
-		let result = {};
-		$groupList.$groups.forEach(($group) => {
-			result[$group.name] = {
-				isShow: $group.isShow,
-				areas: $group.$areas.map((area) => {
-					let $area = $(area);
-					return {
-						x1: $area.data('x1'),
-						x2: $area.data('x2'),
-						y1: $area.data('y1'),
-						y2: $area.data('y2')
-					};
-				})
-			};
-		});
-
-		let image = $canvas.getImage();
-
-		if (!/^http(s)?:\/\//.test(image)) {
-			image = '';
-		}
-
-		return {
-			image,
-			data: result,
-			setting: params
-		};
-	}
-
 	$optionsDownload.on('click', () => {
 
-		let params = {};
-
-		if ($size.data('checked', undefined, true)) {
-			params.resize = true;
-			params.width = $canvas.imgWidth;
-			params.height = $canvas.imgHeight;
-		}
-
-		ajax('/save', 'POST', getOptions($groupList, params), (res) => {
+		ajax('/save', 'POST', getOptions($groupList), (res) => {
 			try {
 				let resData = JSON.parse(res.responseText);
 				if (resData.errcode === 200) {

@@ -1,5 +1,5 @@
 {
-  "image": "",
+  "image": "https://qiniu-pic.ibeiliao.com/o_1c913edpdc6a1726kf4120eigp7.png",
   "data": {
     "分组1a": {
       "isShow": true,
@@ -156,7 +156,7 @@
   },
   "setting": {
     "resize": true,
-    "width": 1006,
+    "width": 1000,
     "height": 638
   }
 }
