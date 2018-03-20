@@ -3,13 +3,19 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
+const qs = require('querystring');
+
 const config = require('./config');
 
-const basePath = path.join(__dirname, '..', 'dist');
+const basePath = path.join(__dirname, '..');
 
 const route = {
-	'/': path.join(basePath, 'customize', 'customize.html'),
-	'/example': path.join(basePath, 'example', 'example.html'),
+	'/': function(req, res) {
+		res.writeHead(302, { 'Location': '/customize' }); // 重定向
+		res.end();
+	},
+	'/customize': path.join(basePath, 'customize', 'index.html'),
+	'/example': path.join(basePath, 'example', 'index.html'),
 	'/save': function(req, res) {
 		fs.writeFile(path.join(basePath, 'example', 'data.json'), JSON.stringify(req.body, null, 2), (err) => {
 			if (err) {
@@ -58,7 +64,11 @@ http.createServer((req, res) => {
 
 		// 请求结束时
 		req.on('end', () => {
-			req.body = JSON.parse(postData); // 设置参数
+			try {
+				req.body = JSON.parse(postData); // 设置参数
+			} catch (err) {
+				req.body = qs.parse(postData); // 设置参数
+			}
 			req.query = getData; // 设置参数
 			result(req, res);
 		});

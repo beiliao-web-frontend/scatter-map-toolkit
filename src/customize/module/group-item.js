@@ -102,21 +102,6 @@ class GroupItem extends $.class {
 
 	}
 
-	forEach(callback) {
-		super.each((node) => {
-			callback(new GroupItem(node));
-		});
-	}
-
-	eq(index) {
-		return new GroupItem(super.eq(index));
-	}
-
-	remove() {
-		this.$areas.remove();
-		super.remove();
-	}
-
 	set name(val) {
 		this
 			.data('name', val)
@@ -169,6 +154,22 @@ class GroupItem extends $.class {
 			return $result;
 		}
 		return this.data('$areas');
+	}
+
+
+	forEach(callback) {
+		super.each((node) => {
+			callback(new GroupItem(node));
+		});
+	}
+
+	eq(index) {
+		return new GroupItem(super.eq(index));
+	}
+
+	remove() {
+		this.$areas.remove();
+		super.remove();
 	}
 
 	append($area) {

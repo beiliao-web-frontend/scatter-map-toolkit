@@ -83,6 +83,8 @@ class Canvas extends $.class {
 
 				this.$areas.append($area);
 
+				this.$groupList.$groups.$areas.removeClass('hover');
+
 				this.$groupList.$currentGroup.append($area);
 			}
 
@@ -122,7 +124,7 @@ class Canvas extends $.class {
 				return;
 			}
 
-			this.$currentArea.addClass('hover');
+			this.$groupList.$groups.$areas.addClass('hover');
 
 			let x1 = util.toFloat(this.$currentArea.data('x1'));
 			let x2 = util.toFloat(this.$currentArea.data('x2'));
@@ -142,7 +144,9 @@ class Canvas extends $.class {
 	}
 
 	bind($groupList) {
-		this.$groupList = $groupList;
+		if (util.isGroupList($groupList)) {
+			this.$groupList = $groupList;
+		}
 		return this;
 	}
 

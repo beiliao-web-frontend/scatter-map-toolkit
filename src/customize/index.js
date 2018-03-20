@@ -54,7 +54,6 @@ const Area = require('./module/area.js');
 			$groupList.append($group);
 		}
 
-		toast('加载成功', 'success');
 	}
 
 	function loadSetting(setting) {
@@ -76,7 +75,6 @@ const Area = require('./module/area.js');
 				$canvas.update();
 			});
 		}
-		toast('加载成功', 'success');
 	}
 
 	function loadOption(isRequire = false, cb) {
@@ -139,6 +137,7 @@ const Area = require('./module/area.js');
 			$canvas.setImage(data, () => {
 				$index.addClass('hide');
 				$groupList.append(new GroupItem());
+				toast('加载成功', 'success');
 			});
 		});
 	});
@@ -146,6 +145,7 @@ const Area = require('./module/area.js');
 	$uploadOption.on('click', () => loadOption(true, (img) => {
 		$canvas.setImage(img, () => {
 			$index.addClass('hide');
+			toast('加载成功', 'success');
 		});
 	}));
 

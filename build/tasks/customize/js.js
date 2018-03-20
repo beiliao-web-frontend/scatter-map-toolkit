@@ -7,12 +7,15 @@ const browserify = require('browserify');           // 模块化打包
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const eslint = require('gulp-eslint');
-const config = require('./../../.eslintrc.js');
+const config = require('./../../../.eslintrc.js');
+
+const srcPath = './../src/customize';
+const destPath = './../customize';
 
 module.exports = () => {
 
 	const b = browserify({
-		entries: './../src/customize/customize.js',
+		entries: `${ srcPath }/index.js`,
 		debug: true
 	});
 
@@ -24,7 +27,7 @@ module.exports = () => {
 				throw err; // 抛出异常
 			}
 		}), // 创建文件流
-		source('customize.js'), // 生成出来的文件
+		source('index.js'), // 生成出来的文件
 		buffer(), // 由于gulp不支持stream，这里把流转成buffer
 		sourcemaps.init({
 			loadMaps: true
@@ -37,6 +40,6 @@ module.exports = () => {
 		}),
 		uglify({ ie8: true }),
 		sourcemaps.write('.'),
-		gulp.dest('./../dist/customize')
+		gulp.dest(destPath)
 	]);
 };
