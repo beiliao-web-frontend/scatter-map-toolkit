@@ -7,6 +7,7 @@ const Uploader = require('./module/uploader.js');
 const Canvas = require('./module/canvas.js');
 const GroupList = require('./module/group-list.js');
 const GroupItem = require('./module/group-item.js');
+const Area = require('./module/area.js');
 
 (function() {
 
@@ -14,129 +15,7 @@ const GroupItem = require('./module/group-item.js');
 	const $groupList = new GroupList('#group');
 	const $canvas = new Canvas('#canvas', '#container');
 
-
-	/* 索引页 */
-	const $index = $('#index');
-	const $uploadImg = $('#upload-img');
-	const $uploadOption = $('#upload-option');
-
-	function loadData() {
-		toast('加载成功', 'success');
-	}
-
-	function loadOption(isRequire = false) {
-		$uploader.open({
-			name: '配置文件',
-			accept: 'text/json'
-		}).success((data) => {
-			data = base64.decode(data.replace('data:;base64,', ''));
-			try {
-				data = JSON.parse(data);
-			} catch (e) {
-				toast('配置文件解析出错', 'error');
-				throw new Error('配置文件解析出错');
-			}
-
-			if (isRequire === true && !data.image) {
-				popup({
-					content: '当前配置文件缺少图片<br />是否上传图片',
-					confirmText: '是',
-					cancelText: '否',
-					confirm() {
-						$uploader.open({
-							name: '图片',
-							accept: 'image/*'
-						}).success((data) => {
-							$canvas.setImage(data);
-							$index.addClass('hide');
-						});
-					},
-					cancel() {
-						toast('加载数据失败，请先上传图片', 'error');
-					}
-				});
-			} else {
-				loadData(data);
-			}
-		});
-	}
-
-	$index.on('animationend', () => $index.remove());
-
-	$uploadImg.on('click', () => {
-		$uploader.open({
-			name: '图片',
-			accept: 'image/*'
-		}).success((data) => {
-			$canvas.setImage(data);
-			$index.addClass('hide');
-		});
-	});
-
-	$uploadOption.on('click', () => loadOption(true));
-
-	/* 画布操作 */
-	const $zoomIn = $('#zoom-in');
-	const $zoomOut = $('#zoom-out');
-	const $replaceImg = $('#replace-img');
-
-	$canvas.bind($groupList);
-
-	$zoomIn.on('click', () => $canvas.zoomIn());
-
-	$zoomOut.on('click', () => $canvas.zoomOut());
-
-	$replaceImg.on('click', () => {
-		$uploader.open({
-			name: '图片',
-			accept: 'image/*'
-		}).success((data) => {
-			$canvas.setImage(data);
-		});
-	});
-
-
-	/* 分组操作 */
-	const $addGroup = $('#add-group');
-	const $search = $('#search');
-	const $current = $('#current');
-
-	$groupList.on('current', ($group) => {
-		$current.text($group.name);
-	}, true, false);
-
-	$addGroup.on('click', () => {
-		$groupList.append(new GroupItem());
-	}).click();
-
-	$search.on('input', () => {
-		$groupList.$groups.forEach(($group) => {
-			if ($group.name.indexOf($search.value()) !== -1) {
-				$group.show();
-			} else {
-				$group.hide();
-			}
-		});
-	});
-
-
-	/* 标签页切换 */
-	const $tabs = $('#tabs');
-
-	$tabs.find('.tab-item').on('click', function() {
-		$('#' + this.attr('data-type'))
-			.show()
-			.siblings()
-			.hide();
-
-		this
-			.addClass('active')
-			.siblings()
-			.removeClass('active');
-	});
-
-
-	/* 尺寸 */
+		/* 尺寸 */
 	const $size = $('#size');
 	const $sizeWidth = $('#sizeWidth');
 	const $sizeHeight = $('#sizeHeight');
@@ -179,7 +58,190 @@ const GroupItem = require('./module/group-item.js');
 	});
 
 
-	/* 配置文件 */
+	/* 索引页 */
+	const $index = $('#index');
+	const $uploadImg = $('#upload-img');
+	const $uploadOption = $('#upload-option');
+
+	function loadData(data) {
+		for (let name in data) {
+			let item = data[name];
+			let $group = new GroupItem();
+
+			item.areas.forEach((area) => {
+				let $area = new Area();
+				$area
+					.data(area)
+					.addClass('hover')
+					.css({
+						top: area.y1,
+						left: area.x1,
+						width: parseFloat(area.x2) - parseFloat(area.x1) + '%',
+						height: parseFloat(area.y2) - parseFloat(area.y1) + '%'
+					});
+				$group.append($area);
+				$canvas.append($area);
+			});
+
+			$group.name = name;
+			$group.isShow = item.isShow;
+
+			$groupList.append($group);
+		}
+
+		toast('加载成功', 'success');
+	}
+
+	function loadSetting(setting) {
+		if (setting.resize) {
+			$size.data('checked', true, true);
+			let flag = true;
+			$canvas.ready(() => {
+				if (flag) {
+					$sizeWidth.value(setting.width).data('value', setting.width);
+					$sizeHeight.value(setting.height).data('value', setting.height);
+					$sizeInput.removeAttr('disabled');
+					$canvas.imgHeight = setting.height;
+					$canvas.imgWidth = setting.width;
+					flag = false;
+				} else {
+					$sizeWidth.value($canvas.imgWidth).data('value', $canvas.imgWidth);
+					$sizeHeight.value($canvas.imgHeight).data('value', $canvas.imgHeight);
+				}
+				$canvas.update();
+			});
+		}
+		toast('加载成功', 'success');
+	}
+
+	function loadOption(isRequire = false, cb) {
+		$uploader.open({
+			name: '配置文件',
+			accept: 'text/json'
+		}).success((data) => {
+			let options = base64.decode(data.replace('data:;base64,', ''));
+			try {
+				options = JSON.parse(options);
+			} catch (e) {
+				toast('配置文件解析出错', 'error');
+				throw new Error('配置文件解析出错');
+			}
+
+			if (isRequire === true && !options.image) {
+				popup({
+					content: '当前配置文件缺少图片<br />是否上传图片',
+					confirmText: '是',
+					cancelText: '否',
+					confirm() {
+						$uploader.open({
+							name: '图片',
+							accept: 'image/*'
+						}).success((data) => {
+							loadData(options.data);
+							loadSetting(options.setting);
+
+							if (typeof cb === 'function') {
+								cb(data);
+							}
+						});
+					},
+					cancel() {
+						toast('加载数据失败，请先上传图片', 'error');
+					}
+				});
+			} else {
+				loadData(options.data);
+				loadSetting(options.setting);
+
+				if (typeof cb === 'function') {
+					cb(options.image);
+				}
+			}
+		});
+	}
+
+	$index.on('animationend', () => $index.remove());
+
+	$uploadImg.on('click', () => {
+		$uploader.open({
+			name: '图片',
+			accept: 'image/*'
+		}).success((data) => {
+			$canvas.setImage(data, () => {
+				$index.addClass('hide');
+				$groupList.append(new GroupItem());
+			});
+		});
+	});
+
+	$uploadOption.on('click', () => loadOption(true, (img) => {
+		$canvas.setImage(img, () => {
+			$index.addClass('hide');
+		});
+	}));
+
+	/* 画布操作 */
+	const $zoomIn = $('#zoom-in');
+	const $zoomOut = $('#zoom-out');
+	const $replaceImg = $('#replace-img');
+
+	$canvas.bind($groupList);
+
+	$zoomIn.on('click', () => $canvas.zoomIn());
+
+	$zoomOut.on('click', () => $canvas.zoomOut());
+
+	$replaceImg.on('click', () => {
+		$uploader.open({
+			name: '图片',
+			accept: 'image/*'
+		}).success((data) => {
+			$canvas.setImage(data);
+		});
+	});
+
+
+	/* 分组操作 */
+	const $addGroup = $('#add-group');
+	const $search = $('#search');
+	const $current = $('#current');
+
+	$groupList.on('current', ($group) => {
+		$current.text($group.name);
+	}, true, false);
+
+	$addGroup.on('click', () => {
+		$groupList.append(new GroupItem());
+	});
+
+	$search.on('input', () => {
+		$groupList.$groups.forEach(($group) => {
+			if ($group.name.indexOf($search.value()) !== -1) {
+				$group.show();
+			} else {
+				$group.hide();
+			}
+		});
+	});
+
+
+	/* 标签页切换 */
+	const $tabs = $('#tabs');
+
+	$tabs.find('.tab-item').on('click', function() {
+		$('#' + this.attr('data-type'))
+			.show()
+			.siblings()
+			.hide();
+
+		this
+			.addClass('active')
+			.siblings()
+			.removeClass('active');
+	});
+
+
+		/* 配置文件 */
 	let $options = $('#options');
 	let $optionsUpload = $options.find('.js-upload');
 	let $optionsDownload = $options.find('.js-download');
@@ -189,7 +251,7 @@ const GroupItem = require('./module/group-item.js');
 		$groupList.$groups.forEach(($group) => {
 			result[$group.name] = {
 				isShow: $group.isShow,
-				data: $group.$areas.map((area) => {
+				areas: $group.$areas.map((area) => {
 					let $area = $(area);
 					return {
 						x1: $area.data('x1'),
@@ -201,7 +263,14 @@ const GroupItem = require('./module/group-item.js');
 			};
 		});
 
+		let image = $canvas.getImage();
+
+		if (!/^http(s)?:\/\//.test(image)) {
+			image = '';
+		}
+
 		return {
+			image,
 			data: result,
 			setting: params
 		};
@@ -238,7 +307,12 @@ const GroupItem = require('./module/group-item.js');
 			content: '加载成功后将清空当前数据<br />是否继续',
 			confirmText: '是',
 			cancelText: '否',
-			confirm: loadOption,
+			confirm() {
+				loadOption(false, () => {
+					$groupList.$groups.remove();
+					$groupList.$groups = new GroupItem([]);
+				});
+			},
 			cancel() {
 				toast('取消当前操作');
 			}

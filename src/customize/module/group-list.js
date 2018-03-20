@@ -8,6 +8,7 @@ class GroupList extends $.class {
 		super(selector);
 
 		this.$groups = new GroupItem([]);
+
 	}
 
 	check() {
@@ -50,12 +51,16 @@ class GroupList extends $.class {
 
 		$group.on('delete', () => {
 			if (this.$groups.size() > 1) {
-				this.$groups.splice(this.$groups.index($group));
+				let index = this.$groups.index($group);
+				if (index !== -1) {
+					this.$groups.splice(index);
+				}
 				this.check();
 			} else {
 				toast('删除失败，至少保留一个分组', 'error');
 				return false;
 			}
+
 		}, true, false);
 
 		$group.on('rename', (name) => {

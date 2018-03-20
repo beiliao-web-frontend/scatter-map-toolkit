@@ -170,10 +170,29 @@ class Canvas extends $.class {
 		return this;
 	}
 
-	setImage(src) {
+	append($area) {
+		if (!util.isArea($area)) {
+			return this;
+		}
+
+		this
+			.find('.js-areas')
+			.append($area);
+	}
+
+	setImage(src, cb) {
 		this.$img.attr('src', src);
-		this.$img.on('load', () => this.init(), true);
+		this.$img.on('load', () => {
+			this.init();
+			if (typeof cb === 'function') {
+				cb();
+			}
+		}, true);
 		return this;
+	}
+
+	getImage() {
+		return this.$img.attr('src');
 	}
 
 	zoomIn(count = 0.1) {

@@ -25,7 +25,6 @@ class GroupItem extends $.class {
 			</span>
 		</li>`);
 
-		let self = this;
 		this.$areas = $();
 
 		// 选中
@@ -43,25 +42,9 @@ class GroupItem extends $.class {
 		// 显示和隐藏
 		let $status = this.find('.js-status');
 
-		$status.on('click', function() {
+		$status.on('click', () => {
 
-			if (this.hasClass('icon-show')) {
-				this
-					.addClass('icon-hide')
-					.removeClass('icon-show')
-					.attr('title', '显示');
-
-				self.isShow = false;
-				self.$areas.hide();
-			} else {
-				this
-					.addClass('icon-show')
-					.removeClass('icon-hide')
-					.attr('title', '显示');
-
-				self.isShow = true;
-				self.$areas.show();
-			}
+			this.isShow = !$status.hasClass('icon-show');
 
 		});
 
@@ -110,7 +93,7 @@ class GroupItem extends $.class {
 				confirm: () => {
 					let flag = this.emit('delete');
 					if (flag !== false) {
-						this.remove();
+						super.remove();
 						this.$areas.remove();
 					}
 				}
@@ -129,6 +112,11 @@ class GroupItem extends $.class {
 		return new GroupItem(super.eq(index));
 	}
 
+	remove() {
+		this.$areas.remove();
+		super.remove();
+	}
+
 	set name(val) {
 		this
 			.data('name', val)
@@ -139,12 +127,27 @@ class GroupItem extends $.class {
 
 	get name() {
 		if (this.size() > 1) {
-			return '';
+			return '分组集';
 		}
 		return this.data('name');
 	}
 
 	set isShow(val) {
+		let $status = this.find('.js-status');
+
+		if (val) {
+			this.$areas.show();
+			$status
+					.addClass('icon-show')
+					.removeClass('icon-hide')
+					.attr('title', '显示');
+		} else {
+			this.$areas.hide();
+			$status
+					.addClass('icon-hide')
+					.removeClass('icon-show')
+					.attr('title', '显示');
+		}
 		this.data('isShow', val);
 	}
 
@@ -159,7 +162,11 @@ class GroupItem extends $.class {
 
 	get $areas() {
 		if (this.size() > 1) {
-			return $();
+			let $result = $();
+			this.forEach(($group) => {
+				$result.push($group.$areas);
+			});
+			return $result;
 		}
 		return this.data('$areas');
 	}
