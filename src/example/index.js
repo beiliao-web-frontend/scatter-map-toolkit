@@ -26,7 +26,13 @@ function start(data, configs) {
 
 	function position(config) {
 		if (!config.include && !config.exculde) {
-			return scatterMap.random();
+
+			if (config.fixed) {
+				return scatterMap.randomFixed();
+
+			} else {
+				return scatterMap.random();
+			}
 		} else {
 			return scatterMap.randomFromGroup(config.include, config.exculde);
 		}
@@ -89,6 +95,7 @@ function init() {
 				$pic.onload = () => {
 					if (hash) {
 						start(data, [{
+							fixed: true,
 							count: 500,
 							minScale: 0.2,
 							maxScale: 1.2

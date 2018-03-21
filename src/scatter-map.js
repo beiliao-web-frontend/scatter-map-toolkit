@@ -63,7 +63,7 @@
 
 		let groups = {};
 
-		let names = [];
+		let groupNames = [];
 
 		let totalResult = []; // 按面积为权重生成的结果集
 
@@ -77,9 +77,11 @@
 
 			groups[name] = group;
 
-			names.push(name);
+			groupNames.push(name);
 
 		}
+
+		this.groupNames = groupNames;
 
 		this.randomGroup = function(result) {
 
@@ -90,7 +92,7 @@
 
 		this.randomFromGroup = function(include, exclude) {
 
-			include = include || names;
+			include = include || groupNames;
 
 			exclude = exclude || [];
 
@@ -119,6 +121,10 @@
 
 		this.random = function() {
 			return this.randomGroup().random();
+		};
+
+		this.randomFixed = function() {
+			return this.randomGroup(groupNames).random();
 		};
 
 	}
