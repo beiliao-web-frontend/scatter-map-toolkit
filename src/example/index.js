@@ -8,8 +8,8 @@ function updatePoint($point, position, config) {
 		return;
 	}
 
-	let scale = config.minScale + (config.maxScale * Math.random());
-	let delay = config.minDelay + (config.maxDelay * Math.random());
+	let scale = config.minScale + ((config.maxScale - config.minScale) * Math.random());
+	let delay = config.minDelay + ((config.maxDelay - config.minDelay) * Math.random());
 
 	$point.style.cssText = `transform: scale(${ scale }); top: ${ position.y }; left: ${ position.x };`;
 
@@ -34,7 +34,7 @@ function start(data, configs) {
 				return scatterMap.random();
 			}
 		} else {
-			return scatterMap.randomFromGroup(config.include, config.exculde);
+			return scatterMap.randomFromGroup(config.include, config.exculde, config.fixed);
 		}
 	}
 
@@ -119,11 +119,13 @@ function init() {
 							maxScale: 0.8
 						}, {
 							exculde: '其他',
+							fixed: true,
 							count: 300,
 							minScale: 0.1,
 							maxScale: 0.3
 						}, {
 							include: '其他',
+							fixed: true,
 							count: 50,
 							minScale: 1,
 							maxScale: 1.5
