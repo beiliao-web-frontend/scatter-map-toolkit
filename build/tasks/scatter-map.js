@@ -12,7 +12,6 @@ module.exports = () => {
 
 	return pump([
 		gulp.src(`${ srcPath }/scatter-map.js`),
-		gulp.dest(destPath),
 		sourcemaps.init({
 			loadMaps: true
 		}),
@@ -22,6 +21,7 @@ module.exports = () => {
 				'stage-2'
 			]
 		}),
+		gulp.dest(destPath),
 		uglify({ ie8: true }),
 		rename({
 			basename: 'scatter-map',

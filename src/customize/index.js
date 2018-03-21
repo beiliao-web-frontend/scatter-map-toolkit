@@ -54,6 +54,10 @@ const Area = require('./module/area.js');
 			$groupList.append($group);
 		}
 
+		if ($groupList.$groups.size() === 0) {
+			$groupList.append(new GroupItem());
+		}
+
 	}
 
 	function loadSetting(setting) {
@@ -127,7 +131,7 @@ const Area = require('./module/area.js');
 		});
 	}
 
-	function getOptions($groupList) {
+	function getOptions($groupList, type) {
 
 		let params = {};
 
@@ -155,7 +159,7 @@ const Area = require('./module/area.js');
 
 		let image = $canvas.getImage();
 
-		if (!/^http(s)?:\/\//.test(image)) {
+		if (!/^http(s)?:\/\//.test(image) && type === 'download') {
 			image = '';
 		}
 
@@ -210,17 +214,21 @@ const Area = require('./module/area.js');
 	});
 
 	$preview.on('click', () => {
-		ajax('/save', 'POST', getOptions($groupList), (res) => {
-			try {
-				let resData = JSON.parse(res.responseText);
-				if (resData.errcode === 200) {
-					window.open('/example');
-				} else {
-					toast(resData.errmsg, 'error');
+		ajax('/save?type=example', {
+			method: 'POST',
+			data: getOptions($groupList),
+			success(res) {
+				try {
+					let resData = JSON.parse(res.responseText);
+					if (resData.errcode === 200) {
+						window.open('/example#online');
+					} else {
+						toast(resData.errmsg, 'error');
+					}
+				} catch (e) {
+					toast('数据格式非JSON', 'error');
+					throw new Error('数据格式非JSON');
 				}
-			} catch (e) {
-				toast('数据格式非JSON', 'error');
-				throw new Error('数据格式非JSON');
 			}
 		});
 	});
@@ -311,19 +319,24 @@ const Area = require('./module/area.js');
 
 	$optionsDownload.on('click', () => {
 
-		ajax('/save', 'POST', getOptions($groupList), (res) => {
-			try {
-				let resData = JSON.parse(res.responseText);
-				if (resData.errcode === 200) {
-					window.open(resData.data);
-				} else {
-					toast(resData.errmsg, 'error');
+		ajax('/save?type=customize', {
+			method: 'POST',
+			data: getOptions($groupList, 'download'),
+			success(res) {
+				try {
+					let resData = JSON.parse(res.responseText);
+					if (resData.errcode === 200) {
+						window.open(resData.data);
+					} else {
+						toast(resData.errmsg, 'error');
+					}
+				} catch (e) {
+					toast('数据格式非JSON', 'error');
+					throw new Error('数据格式非JSON');
 				}
-			} catch (e) {
-				toast('数据格式非JSON', 'error');
-				throw new Error('数据格式非JSON');
 			}
 		});
+
 	});
 
 	$optionsUpload.on('click', () => {

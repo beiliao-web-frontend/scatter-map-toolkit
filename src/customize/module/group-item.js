@@ -78,8 +78,6 @@ class GroupItem extends $.class {
 			$nameInput.hide();
 			$nameText.show();
 
-			this.name = name;
-
 		});
 
 		$nameInput.on('blur', () => $submit.click());

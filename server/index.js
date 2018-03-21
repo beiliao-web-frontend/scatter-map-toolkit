@@ -17,7 +17,23 @@ const route = {
 	'/customize': path.join(basePath, 'customize', 'index.html'),
 	'/example': path.join(basePath, 'example', 'index.html'),
 	'/save': function(req, res) {
-		fs.writeFile(path.join(basePath, 'example', 'data.json'), JSON.stringify(req.body, null, 2), (err) => {
+
+		let type = req.query.type;
+
+		if (['customize', 'example'].indexOf(type) === -1) {
+			res.end(JSON.stringify({
+				errcode: 500,
+				errmsg: '参数错误'
+			}));
+			return;
+		}
+
+		let filePath = {
+			customize: '/customize/temp.json',
+			example: '/example/online.json'
+		};
+
+		fs.writeFile(path.join(basePath, filePath[type]), JSON.stringify(req.body, null, 2), (err) => {
 			if (err) {
 				res.end(JSON.stringify({
 					errcode: 500,
@@ -28,7 +44,7 @@ const route = {
 
 			res.end(JSON.stringify({
 				errcode: 200,
-				data: '/example/data.json'
+				data: filePath[type]
 			}));
 		});
 	}

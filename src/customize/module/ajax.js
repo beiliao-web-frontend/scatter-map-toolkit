@@ -1,13 +1,13 @@
-module.exports = (url, method, data, callback) => {
+module.exports = (url, options) => {
 	let xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 			if (xhr.status == 200) {
-				callback(xhr);
+				options.success(xhr);
 			}
 		}
 	};
-	xhr.open(method, url, true);
+	xhr.open(options.method, url, true);
 	xhr.setRequestHeader('Content-type', 'application/json');
-	xhr.send(JSON.stringify(data));
+	xhr.send(JSON.stringify(options.data || {}));
 };

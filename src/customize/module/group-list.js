@@ -69,6 +69,10 @@ class GroupList extends $.class {
 				toast('名称已存在', 'error');
 				return false;
 			}
+
+			$group.name = name;
+
+			this.emit('current', this.$currentGroup);
 		}, true, false);
 
 		super.append($group);
