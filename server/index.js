@@ -63,8 +63,6 @@ http.createServer((req, res) => {
 		path.join(basePath, pathName) : // 如果是文件
 		route[pathName]; // 如果是页面或者接口
 
-	result = result || '';
-
 	if (typeof result === 'function') {
 		let postData = ''; // post请求的参数
 		let getData = url.parse(req.url, true).query; // get请求的参数
@@ -88,26 +86,25 @@ http.createServer((req, res) => {
 			req.query = getData; // 设置参数
 			result(req, res);
 		});
-	} else {
+	} else if (result) {
 		let type = result.slice(result.lastIndexOf('.') + 1); // 获取访问资源后缀名
 
 		res.writeHead(200, {
 			'Content-Type': contentTypes[type] || 'application/octet-stream'
 		});
 
-		if (result) {
-			fs.readFile(result, function(err, file) {
-				if (err) {
-					res.writeHead(404);
-					res.end('404 NOT FOUND...');
-				} else {
-					res.end(file);
-				}
-			});
-		} else {
-			res.writeHead(404);
-			res.end('404 NOT FOUND...');
-		}
+		fs.readFile(result, function(err, file) {
+			if (err) {
+				res.writeHead(404);
+				res.end('404 NOT FOUND...');
+			} else {
+				res.end(file);
+			}
+		});
+
+	} else {
+		res.writeHead(404);
+		res.end('404 NOT FOUND...');
 	}
 
 }).listen(config.port);
