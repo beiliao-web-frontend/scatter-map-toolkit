@@ -103,6 +103,10 @@ function init() {
 
 					} else {
 
+						let $main = document.getElementById('main');
+
+						$main.className = 'main example';
+
 						start(data, [{
 							include: ['广东', '河南', '湖南', '山东', '河北'],
 							count: 400,
