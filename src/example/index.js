@@ -2,6 +2,33 @@ const hash = window.location.hash.replace(/^#/, '');
 
 const $points = document.getElementById('points');
 
+const config = {
+	level1: {
+		minScale: 0.1,
+		maxScale: 0.3,
+		minDelay: 200,
+		maxDelay: 1600
+	},
+	level2: {
+		minScale: 0.2,
+		maxScale: 0.5,
+		minDelay: 300,
+		maxDelay: 1700
+	},
+	level3: {
+		minScale: 0.5,
+		maxScale: 0.7,
+		minDelay: 400,
+		maxDelay: 1800
+	},
+	level4: {
+		minScale: 0.8,
+		maxScale: 1.2,
+		minDelay: 500,
+		maxDelay: 2000
+	}
+};
+
 /**
  * 更新点的状态和样式
  * @method updatePoint
@@ -37,25 +64,20 @@ function start(data, configs) {
 
 	const scatterMap = new ScatterMap(data); // 工具实例化
 
+	if (!Array.isArray(configs)) {
+		configs = [configs];
+	}
+
 	function position(config) {
 		if (!config.include && !config.exculde) { // 如果不是特定分组
-
-			if (config.fixed) {
-				return scatterMap.randomFixed(); // 不根据权重随机获取坐标
-
-			} else {
-				return scatterMap.random(); // 根据权重随机获取坐标
-			}
+			return scatterMap.random(); // 根据权重随机获取坐标
 		} else {
-			return scatterMap.randomFromGroup(config.include, config.exculde, config.fixed); // 返回特定条件下分组的坐标
+			return scatterMap.randomFromGroup(config.include, config.exculde); // 返回特定条件下分组的坐标
 		}
 	}
 
 	for (let i = 0; i < configs.length; i++) {
 		let config = configs[i];
-
-		config.minDelay = 300;
-		config.maxDelay = 2000;
 
 		for (let j = 0; j < config.count; j++) {
 
@@ -79,7 +101,17 @@ function ajax(url, options) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 			if (xhr.status == 200) {
-				options.success(xhr);
+				if (typeof options.success === 'function') {
+					try {
+						options.success(JSON.parse(xhr.responseText));
+					} catch (err) {
+						throw new Error('JSON解析出错');
+					}
+				}
+			} else {
+				if (typeof options.success === 'function') {
+					options.error(xhr);
+				}
 			}
 		}
 	};
@@ -100,59 +132,45 @@ function init() {
 
 	ajax(url, {
 		method: 'GET',
-		success(res) {
-			try {
+		success(data) {
 
-				let data = JSON.parse(res.responseText);
+			let $pic = document.getElementById('pic');
 
-				let $pic = document.getElementById('pic');
+			$pic.onload = () => {
+				if (hash) {
+					start(data, {
+						count: 500,
+						minScale: 0.2,
+						maxScale: 1.2,
+						minDelay: 300,
+						maxDelay: 2000
+					});
 
-				$pic.onload = () => {
-					if (hash) {
-						start(data, [{
-							fixed: true,
-							count: 500,
-							minScale: 0.2,
-							maxScale: 1.2
-						}]);
+				} else {
 
-					} else {
+					let $main = document.getElementById('main');
 
-						let $main = document.getElementById('main');
+					$main.className = 'main example';
 
-						$main.className = 'main example';
+					ajax('/data', {
+						method: 'GET',
+						success(res) {
+							if (res.code === 200) {
+								start(data, res.data.map((item) => {
+									let conf = config[item.level];
+									return {
+										include: item.name,
+										count: item.count,
+										...conf
+									};
+								}));
+							}
+						}
+					});
+				}
+			};
 
-						start(data, [{
-							include: ['广东', '河南', '湖南', '山东', '河北'],
-							count: 400,
-							minScale: 0.3,
-							maxScale: 1.2
-						}, {
-							include: ['江苏', '山西', '广西', '安徽', '湖北', '陕西', '四川', '云南', '江西'],
-							count: 250,
-							minScale: 0.2,
-							maxScale: 0.8
-						}, {
-							exculde: '其他',
-							fixed: true,
-							count: 300,
-							minScale: 0.1,
-							maxScale: 0.3
-						}, {
-							include: '其他',
-							fixed: true,
-							count: 50,
-							minScale: 1,
-							maxScale: 1.5
-						}]);
-					}
-				};
-
-				$pic.src = data.image;
-
-			} catch (err) {
-				throw new Error('JSON解析出错');
-			}
+			$pic.src = data.image;
 		}
 	});
 }

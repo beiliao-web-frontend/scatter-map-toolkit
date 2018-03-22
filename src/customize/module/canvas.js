@@ -139,6 +139,8 @@ class Canvas extends $.class {
 				this.$currentArea.remove().emit('delete'); // 移除非法数据
 			}
 
+			this.$currentArea.addClass('active');
+
 			this.$currentArea = null;
 		});
 	}

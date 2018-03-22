@@ -10,40 +10,91 @@ const config = require('./config');
 const basePath = path.join(__dirname, '..');
 
 const route = {
-	'/': function(req, res) {
+	'/'(req, res) {
 		res.writeHead(302, { 'Location': '/customize' }); // 重定向
 		res.end();
 	},
 	'/customize': path.join(basePath, 'customize', 'index.html'),
 	'/example': path.join(basePath, 'example', 'index.html'),
-	'/save': function(req, res) {
+	'/data'(req, res) {
+		let provinces = ['新疆', '西藏', '甘肃', '青海', '四川', '云南', '内蒙古', '贵州', '广西', '广东', '海南', '湖南', '江西', '福建', '台湾', '浙江', '河南', '安徽', '湖北', '重庆', '陕西', '宁夏', '山西', '河北', '北京', '天津', '山东', '江苏', '辽宁', '吉林', '黑龙江', '上海', '澳门', '香港'];
+
+		let config = {
+			level1: {
+				include: ['天津', '北京', '上海', '香港', '澳门'],
+				minCount: 3,
+				maxCount: 6
+			},
+			level2: {
+				minCount: 5,
+				maxCount: 15
+			},
+			level3: {
+				include: ['江苏', '山西', '广西', '安徽', '湖北', '陕西', '四川', '云南', '江西'],
+				minCount: 20,
+				maxCount: 40
+			},
+			level4: {
+				include: ['广东', '河南', '湖南', '山东', '河北'],
+				minCount: 80,
+				maxCount: 120
+			}
+		};
+
+		res.end(JSON.stringify({
+			code: 200,
+			data: provinces.map((province) => {
+
+				for (let level in config) {
+					let conf = config[level];
+
+					if (conf.include && conf.include.indexOf(province) !== -1) {
+
+						return {
+							name: province,
+							level: level,
+							count: conf.minCount + Math.round(Math.random() * (conf.maxCount - conf.minCount))
+						};
+					}
+				}
+
+				return {
+					name: province,
+					level: 'level2',
+					count: config.level2.minCount + Math.round(Math.random() * (config.level2.maxCount - config.level2.minCount))
+				};
+
+			})
+		}));
+	},
+	'/save'(req, res) {
 
 		let type = req.query.type;
 
 		if (['customize', 'example'].indexOf(type) === -1) {
 			res.end(JSON.stringify({
-				errcode: 500,
+				code: 500,
 				errmsg: '参数错误'
 			}));
 			return;
 		}
 
 		let filePath = {
-			customize: '/customize/temp.json',
+			customize: '/customize/options.json',
 			example: '/example/online.json'
 		};
 
 		fs.writeFile(path.join(basePath, filePath[type]), JSON.stringify(req.body, null, 2), (err) => {
 			if (err) {
 				res.end(JSON.stringify({
-					errcode: 500,
+					code: 500,
 					errmsg: '文件写入错误'
 				}));
 				return;
 			}
 
 			res.end(JSON.stringify({
-				errcode: 200,
+				code: 200,
 				data: filePath[type]
 			}));
 		});

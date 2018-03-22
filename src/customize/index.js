@@ -220,7 +220,7 @@ const Area = require('./module/area.js');
 			success(res) {
 				try {
 					let resData = JSON.parse(res.responseText);
-					if (resData.errcode === 200) {
+					if (resData.code === 200) {
 						window.open('/example#online');
 					} else {
 						toast(resData.errmsg, 'error');
@@ -241,6 +241,8 @@ const Area = require('./module/area.js');
 
 	$groupList.on('current', ($group) => {
 		$current.text($group.name);
+		$groupList.$groups.$areas.removeClass('active');
+		$group.$areas.addClass('active');
 	}, true, false);
 
 	$addGroup.on('click', () => {
@@ -325,7 +327,7 @@ const Area = require('./module/area.js');
 			success(res) {
 				try {
 					let resData = JSON.parse(res.responseText);
-					if (resData.errcode === 200) {
+					if (resData.code === 200) {
 						window.open(resData.data);
 					} else {
 						toast(resData.errmsg, 'error');

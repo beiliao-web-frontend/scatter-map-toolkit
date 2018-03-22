@@ -186,6 +186,9 @@ body,
 					background: rgba(0, 0, 0, 0.4);
 					box-sizing: border-box;
 					transition: background 0.3s;
+					&.active {
+						animation: current 2s infinite;
+					}
 					&.hover:hover {
 						background: rgba(0, 0, 0, 0.3);
 						z-index: 999;
@@ -204,6 +207,17 @@ body,
 						display: none;
 						cursor: pointer;
 						text-shadow: 0 0 6px #333;
+					}
+					@keyframes current {
+						0% {
+							border-color: #aaa;
+						}
+						50% {
+							border-color: #FFD31B;
+						}
+						100% {
+							border-color: #aaa;
+						}
 					}
 				}
 			}

@@ -21,7 +21,6 @@ module.exports = () => {
 				'stage-2'
 			]
 		}),
-		gulp.dest(destPath),
 		uglify({ ie8: true }),
 		rename({
 			basename: 'scatter-map',

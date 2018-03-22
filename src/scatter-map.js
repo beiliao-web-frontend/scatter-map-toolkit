@@ -6,18 +6,20 @@
 	 * @constructor
 	 * @param {Object} data 包含构成范围的四个坐标点x1, x2, y1, y2
 	 */
-	function Area(data) {
+	class Area {
 
-		let x1 = parseFloat(data.x1);
-		let x2 = parseFloat(data.x2);
-		let y1 = parseFloat(data.y1);
-		let y2 = parseFloat(data.y2);
+		constructor(data) {
+			this.x1 = parseFloat(data.x1);
+			this.x2 = parseFloat(data.x2);
+			this.y1 = parseFloat(data.y1);
+			this.y2 = parseFloat(data.y2);
 
-		let differenceX = x2 - x1;
-		let differenceY = y2 - y1;
+			this.differenceX = this.x2 - this.x1;
+			this.differenceY = this.y2 - this.y1;
 
-		// 长宽之积为坐标范围的面积，计算权重的参数
-		this.product = Math.ceil(differenceX * differenceY);
+			// 长宽之积为坐标范围的面积，计算权重的参数
+			this.sumArea = Math.ceil(this.differenceX * this.differenceY);
+		}
 
 		/**
 		 * 坐标范围内随机生成一个横坐标
@@ -25,9 +27,9 @@
 		 * @for Area
 		 * @return {String} 横坐标，单位：百分比
 		 */
-		this.randomX = function() {
-			return x1 + (differenceX * Math.random()) + '%';
-		};
+		randomX() {
+			return this.x1 + (this.differenceX * Math.random()) + '%';
+		}
 
 		/**
 		 * 坐标范围内随机生成一个纵坐标
@@ -35,9 +37,9 @@
 		 * @for Area
 		 * @return {String} 纵坐标，单位：百分比
 		 */
-		this.randomY = function() {
-			return y1 + (differenceY * Math.random()) + '%';
-		};
+		randomY() {
+			return this.y1 + (this.differenceY * Math.random()) + '%';
+		}
 
 	}
 
@@ -48,25 +50,20 @@
 	 * @param {String} name 分组名
 	 * @param {Array[Area]} areas 坐标范围集合
 	 */
-	function Group(name, areas) {
+	class Group {
 
-		this.name = name; // 分组名
+		constructor(name, areas) {
+			this.name = name; // 分组名
 
-		this.areas = areas || []; // 分组对应的坐标范围
+			this.sumArea = 0; // 分组内坐标范围的总面积，计算权重的参数
 
-		this.sumArea = 0; // 分组内坐标范围的总面积，计算权重的参数
+			this.areas = areas.map((position) => {
+				let area = new Area(position);
 
-		let result = []; // 按面积为权重生成的结果集
+				this.sumArea += area.sumArea;
 
-		for (let i = 0; i < this.areas.length; i++) {
-
-			let area = this.areas[i];
-
-			this.sumArea += area.product;
-
-			for (let j = 0; j < area.product; j++) {
-				result.push(i);
-			}
+				return area;
+			}); // 分组对应的坐标范围
 		}
 
 		/**
@@ -75,9 +72,22 @@
 		 * @for Group
 		 * @return {Area} 坐标范围对象
 		 */
-		this.randomArea = function() {
-			return this.areas[result[Math.floor(Math.random() * result.length)]];
-		};
+		randomArea() {
+
+			let random = Math.ceil(Math.random() * this.sumArea);
+			let sumArea = 0;
+			let result = null;
+
+			this.areas.some((area) => {
+				if (random >= sumArea && random <= sumArea + area.sumArea) {
+					result = area;
+					return true;
+				}
+				sumArea += area.sumArea;
+			});
+
+			return result;
+		}
 
 		/**
 		 * 从分组内的坐标范围随机生成一个坐标
@@ -85,13 +95,13 @@
 		 * @for Group
 		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
 		 */
-		this.random = function() {
+		random() {
 			let area = this.randomArea();
 			return {
 				x: area.randomX(),
 				y: area.randomY()
 			};
-		};
+		}
 
 	}
 
@@ -110,31 +120,26 @@
 	 *       @param {Boolean} [options.width] 重置宽度
 	 *       @param {Boolean} [options.height] 重置高度
 	 */
-	function ScatterMap(options) {
+	class ScatterMap {
 
-		let data = options.data; // 分组数据
+		constructor(options) {
+			let data = options.data; // 分组数据
 
-		let groups = {}; // 分组对象
+			this.groups = {}; // 分组对象
 
-		let groupNames = []; // 所有分组名
+			this.groupNames = []; // 所有分组名
 
-		let totalResult = []; // 按面积为权重生成的总结果集
+			for (let name in data) {
 
-		for (let name in data) {
+				let group = new Group(name, data[name].areas || []); // 创建分组
 
-			let group = new Group(name, data[name].areas.map((position) => new Area(position))); // 创建分组
+				this.groups[name] = group;
 
-			for (let i = 0; i < group.sumArea; i++) {
-				totalResult.push(name);
+				this.groupNames.push(name);
+
 			}
 
-			groups[name] = group;
-
-			groupNames.push(name);
-
 		}
-
-		this.groupNames = groupNames;
 
 		/**
 		 * 根据权重随机获取一个分组
@@ -143,12 +148,12 @@
 		 * @param {Array} [result=totalResult] 权重结果集，默认按面积计算权重
 		 * @return {Group} 分组对象
 		 */
-		this.randomGroup = function(result) {
+		randomGroup(result) {
 
-			result = result || totalResult;
+			result = result || this.groupNames;
 
-			return groups[result[Math.floor(Math.random() * result.length)]];
-		};
+			return this.groups[result[Math.floor(Math.random() * result.length)]];
+		}
 
 		/**
 		 * 从特定分组随机获取坐标
@@ -156,12 +161,11 @@
 		 * @for ScatterMap
 		 * @param {Array|String} [include=groupNames] 包含的分组，默认为全部分组
 		 * @param {Array|String} [include=[]] 排除的分组，默认为空数组
-		 * @param {Boolean} [isFixed=false] 是否使用权重
 		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
 		 */
-		this.randomFromGroup = function(include, exclude, isFixed) {
+		randomFromGroup(include, exclude) {
 
-			include = include || groupNames;
+			include = include || this.groupNames;
 
 			exclude = exclude || [];
 
@@ -173,24 +177,16 @@
 				exclude = [exclude];
 			}
 
-			if (include.length === 1) {
-				return groups[include[0]].random();
-			}
-
-			let group = isFixed ?
-				this.randomGroup(include.filter((name) => {
-					return exclude.indexOf(name) === -1;
-				})) :
-				this.randomGroup(totalResult.filter((name) => {
-					return include.indexOf(name) !== -1 && exclude.indexOf(name) === -1;
-				}));
+			let group = this.randomGroup(include.filter((name) => {
+				return exclude.indexOf(name) === -1;
+			}));
 
 			if (group) {
 				return group.random();
 			}
 
 			return null;
-		};
+		}
 
 		/**
 		 * 根据权重随机获取坐标
@@ -198,19 +194,9 @@
 		 * @for ScatterMap
 		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
 		 */
-		this.random = function() {
+		random() {
 			return this.randomGroup().random();
-		};
-
-		/**
-		 * 不根据权重随机获取坐标
-		 * @method random
-		 * @for ScatterMap
-		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
-		 */
-		this.randomFixed = function() {
-			return this.randomGroup(groupNames).random();
-		};
+		}
 
 	}
 
