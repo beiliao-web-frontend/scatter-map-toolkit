@@ -52,7 +52,7 @@
 	 */
 	class Group {
 
-		constructor(name, areas) {
+		constructor(name, areas = []) {
 			this.name = name; // 分组名
 
 			this.sumArea = 0; // 分组内坐标范围的总面积，计算权重的参数
@@ -74,11 +74,12 @@
 		 */
 		randomArea() {
 
-			let random = Math.ceil(Math.random() * this.sumArea);
+			let random = Math.floor(Math.random() * this.sumArea);
 			let sumArea = 0;
 			let result = null;
 
 			this.areas.some((area) => {
+
 				if (random >= sumArea && random <= sumArea + area.sumArea) {
 					result = area;
 					return true;
@@ -97,10 +98,16 @@
 		 */
 		random() {
 			let area = this.randomArea();
-			return {
-				x: area.randomX(),
-				y: area.randomY()
-			};
+
+			if (area) {
+				return {
+					x: area.randomX(),
+					y: area.randomY()
+				};
+			}
+
+			return null;
+
 		}
 
 	}
@@ -131,7 +138,7 @@
 
 			for (let name in data) {
 
-				let group = new Group(name, data[name].areas || []); // 创建分组
+				let group = new Group(name, data[name].areas); // 创建分组
 
 				this.groups[name] = group;
 
@@ -148,10 +155,7 @@
 		 * @param {Array} [result=totalResult] 权重结果集，默认按面积计算权重
 		 * @return {Group} 分组对象
 		 */
-		randomGroup(result) {
-
-			result = result || this.groupNames;
-
+		randomGroup(result = this.groupNames) {
 			return this.groups[result[Math.floor(Math.random() * result.length)]];
 		}
 
@@ -163,11 +167,7 @@
 		 * @param {Array|String} [include=[]] 排除的分组，默认为空数组
 		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
 		 */
-		randomFromGroup(include, exclude) {
-
-			include = include || this.groupNames;
-
-			exclude = exclude || [];
+		randomFromGroup(include = this.groupNames, exclude = []) {
 
 			if (!Array.isArray(include)) {
 				include = [include];
@@ -177,15 +177,9 @@
 				exclude = [exclude];
 			}
 
-			let group = this.randomGroup(include.filter((name) => {
-				return exclude.indexOf(name) === -1;
-			}));
+			let group = this.randomGroup(include.filter((name) => exclude.indexOf(name) === -1));
 
-			if (group) {
-				return group.random();
-			}
-
-			return null;
+			return group && group.random();
 		}
 
 		/**

@@ -102,11 +102,13 @@ function ajax(url, options) {
 		if (xhr.readyState == 4) {
 			if (xhr.status == 200) {
 				if (typeof options.success === 'function') {
+					let data = null;
 					try {
-						options.success(JSON.parse(xhr.responseText));
+						data = JSON.parse(xhr.responseText);
 					} catch (err) {
-						throw new Error('JSON解析出错');
+						throw err;
 					}
+					options.success(data);
 				}
 			} else {
 				if (typeof options.success === 'function') {
