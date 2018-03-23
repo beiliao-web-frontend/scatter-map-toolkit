@@ -159,3 +159,5 @@ http.createServer((req, res) => {
 	}
 
 }).listen(config.port);
+
+console.log(`> Listening at http://localhost:${ config.port }/\n`);
