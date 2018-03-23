@@ -111,7 +111,7 @@ function ajax(url, options) {
 					options.success(data);
 				}
 			} else {
-				if (typeof options.success === 'function') {
+				if (typeof options.error === 'function') {
 					options.error(xhr);
 				}
 			}
