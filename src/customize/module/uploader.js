@@ -25,7 +25,11 @@ class Uploader extends $.class {
 				this.emit('error', e);
 			};
 
-			reader.readAsDataURL(file);
+			if (this.isText) {
+				reader.readAsText(file);
+			} else {
+				reader.readAsDataURL(file);
+			}
 
 			this.value('');
 		});
@@ -44,6 +48,8 @@ class Uploader extends $.class {
 			this.removeAttr('accept');
 		}
 
+		this.isText = !!this.options.isText;
+
 		this.click();
 
 		return this;
@@ -51,10 +57,12 @@ class Uploader extends $.class {
 
 	success(handler) {
 		this.onsuccess = handler;
+		return this;
 	}
 
 	error(handler) {
 		this.onerror = handler;
+		return this;
 	}
 }
 

@@ -17,9 +17,5 @@ module.exports = () => {
 		if (fs.existsSync(`${ destPath }/module`)) {
 			fs.rmdirSync(`${ destPath }/module`);
 		}
-
-		if (fs.existsSync(`${ destPath }/lib`)) {
-			fs.rmdirSync(`${ destPath }/lib`);
-		}
 	});
 };

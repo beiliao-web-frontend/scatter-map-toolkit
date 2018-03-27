@@ -1,5 +1,4 @@
 const $ = require('./module/dom.js');
-const base64 = require('./lib/base64.js');
 const toast = require('./module/toast.js');
 const popup = require('./module/popup.js');
 const ajax = require('./module/ajax.js');
@@ -84,9 +83,10 @@ const Area = require('./module/area.js');
 	function loadOption(isRequire = false, cb) {
 		$uploader.open({
 			name: '配置文件',
-			accept: 'text/json'
+			accept: 'text/json',
+			isText: true
 		}).success((data) => {
-			let options = base64.decode(data.replace('data:;base64,', ''));
+			let options = data;
 			try {
 				options = JSON.parse(options);
 			} catch (e) {
