@@ -1,3 +1,5 @@
+require('./lib/scale.js');
+
 const hash = window.location.hash.replace(/^#/, '');
 
 const $points = document.getElementById('points');
