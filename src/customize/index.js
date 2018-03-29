@@ -27,11 +27,13 @@ const Area = require('./module/area.js');
 	const $uploadImg = $('#upload-img');
 	const $uploadOption = $('#upload-option');
 
+	// 加载数据
 	function loadData(data) {
 		for (let name in data) {
 			let item = data[name];
 			let $group = new GroupItem();
 
+			// 创建矩形面
 			item.areas.forEach((area) => {
 				let $area = new Area();
 				$area
@@ -59,6 +61,7 @@ const Area = require('./module/area.js');
 
 	}
 
+	// 加载设置项
 	function loadSetting(setting) {
 		if (setting.resize) {
 			$size.data('checked', true, true);
@@ -80,6 +83,7 @@ const Area = require('./module/area.js');
 		}
 	}
 
+	// 加载配置项
 	function loadOption(isRequire = false, cb) {
 		$uploader.open({
 			name: '配置文件',

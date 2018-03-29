@@ -143,7 +143,6 @@ function init() {
 			$pic.onload = () => {
 				if (hash) {
 					start(data, {
-						count: 500,
 						minScale: 0.2,
 						maxScale: 1.2,
 						minDelay: 300,
