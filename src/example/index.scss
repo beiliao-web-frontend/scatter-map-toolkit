@@ -1,0 +1,76 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body,
+.main {
+	width: 100%;
+	height: 100%;
+	min-width: 980px;
+	background-color: #161832;
+}
+
+.main {
+	position: relative;
+
+	&.example {
+		overflow: hidden;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center top;
+		background-image: url('./imgs/bg.jpg');
+	}
+
+	.image {
+		position: absolute;
+		top: 57%;
+		left: 46.5%;
+		transform: translate(-50%, -50%);
+		width: 80%;
+		max-width: 1310px;
+
+		img {
+			width: 100%;
+		}
+
+		.canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	.point {
+		position: absolute;
+		z-index: 20;
+		width: 8px;
+		height: 8px;
+		margin-top: -4px;
+		margin-left: -4px;
+		border-radius: 4px;
+		opacity: 0;
+		box-shadow: 0 0 20px #ffe300;
+		background: radial-gradient(#ffe300, transparent);
+		animation-fill-mode: forwards;
+		&.run {
+			animation: point 2s 2;
+		}
+	}
+
+	@keyframes point {
+		0% {
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+
+}

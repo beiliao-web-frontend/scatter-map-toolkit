@@ -1,0 +1,35 @@
+{
+  "name": "scatter-map-toolkit",
+  "version": "1.0.0",
+  "description": "不规则图形定位工具",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js dev",
+    "build": "node build/index.js prod"
+  },
+  "author": "hanyonghao",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "browserify": "^16.1.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-changed": "^3.2.0",
+    "gulp-clean-css": "^3.9.2",
+    "gulp-eslint": "^4.0.2",
+    "gulp-filter": "^5.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.0",
+    "minimist": "^1.2.0",
+    "node-sass": "^4.7.2",
+    "pump": "^3.0.0",
+    "require-dir": "^1.0.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  }
+}
