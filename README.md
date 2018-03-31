@@ -1,5 +1,3 @@
-# scatter-map-toolkit（散点图工具包）
-
 ## 项目
 
 ### 地址
@@ -12,22 +10,17 @@ https://github.com/hanyonghao/scatter-map-toolkit
 $ git clone https://github.com/hanyonghao/scatter-map-toolkit.git
 ```
 
-### 区域划定
+### 区域划定工具
 
-#### 安装
+#### 启动
 
-```
-$ npm install
-```
+打开命令行，切换到项目目录下，执行：
 
-#### 项目启动
 ```
 $ npm start
 ```
 
-#### 项目地址
-
-http://localhost:8000
+用浏览器打开「 http://localhost:8000/ 」即可进入操作界面。
 
 ### 区域数据使用
 
@@ -75,19 +68,14 @@ let scatterMap = new ScatterMap(options);
 scatterMap.randomFromGroup(['广东', '北京', '上海']); // { x: '50%', y: '50%' }
 ```
 
-#### 演示例子
+#### 示例
 
-##### 安装
+##### 启动
 
-```
-$ npm install
-```
+打开命令行，切换到项目目录下，执行：
 
-##### 项目启动
 ```
 $ npm start
 ```
 
-##### 项目地址
-
-http://localhost:8000/example
+用浏览器打开「 http://localhost:8000/example 」即可进入示例界面。
