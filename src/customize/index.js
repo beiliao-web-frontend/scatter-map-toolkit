@@ -33,7 +33,7 @@ const Area = require('./module/area.js');
 			let item = data[name];
 			let $group = new GroupItem();
 
-			// 创建矩形面
+			// 创建矩形区域
 			item.areas.forEach((area) => {
 				let $area = new Area();
 				$area

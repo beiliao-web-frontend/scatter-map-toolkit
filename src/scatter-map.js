@@ -1,7 +1,7 @@
 (function(global) {
 
 	/**
-	 * 坐标范围
+	 * 区域矩形
 	 * @class Area
 	 * @constructor
 	 * @param {Object} data 包含构成范围的四个坐标点x1, x2, y1, y2
@@ -17,12 +17,12 @@
 			this.differenceX = this.x2 - this.x1;
 			this.differenceY = this.y2 - this.y1;
 
-			// 长宽之积为坐标范围的面积，计算权重的参数
+			// 长宽之积为区域矩形的面积，计算权重的参数
 			this.sumArea = Math.ceil(this.differenceX * this.differenceY);
 		}
 
 		/**
-		 * 坐标范围内随机生成一个横坐标
+		 * 区域矩形内随机生成一个横坐标
 		 * @method randomX
 		 * @for Area
 		 * @return {String} 横坐标，单位：百分比
@@ -32,7 +32,7 @@
 		}
 
 		/**
-		 * 坐标范围内随机生成一个纵坐标
+		 * 区域矩形内随机生成一个纵坐标
 		 * @method randomX
 		 * @for Area
 		 * @return {String} 纵坐标，单位：百分比
@@ -44,18 +44,18 @@
 	}
 
 	/**
-	 * 坐标范围的分组
+	 * 区域矩形的分组
 	 * @class Group
 	 * @constructor
 	 * @param {String} name 分组名
-	 * @param {Array[Area]} areas 坐标范围集合
+	 * @param {Array[Area]} areas 区域矩形集合
 	 */
 	class Group {
 
 		constructor(name, areas = []) {
 			this.name = name; // 分组名
 
-			this.sumArea = 0; // 分组内坐标范围的总面积，计算权重的参数
+			this.sumArea = 0; // 分组内区域矩形的总面积，计算权重的参数
 
 			this.areas = areas.map((position) => {
 				let area = new Area(position);
@@ -63,14 +63,14 @@
 				this.sumArea += area.sumArea;
 
 				return area;
-			}); // 分组对应的坐标范围
+			}); // 分组对应的区域矩形
 		}
 
 		/**
-		 * 根据面积权重随机获取一个坐标范围
+		 * 根据面积权重随机获取一个区域矩形
 		 * @method randomArea
 		 * @for Group
-		 * @return {Area} 坐标范围对象
+		 * @return {Area} 区域矩形对象
 		 */
 		randomArea() {
 
@@ -91,7 +91,7 @@
 		}
 
 		/**
-		 * 从分组内的坐标范围随机生成一个坐标
+		 * 从分组内的区域矩形随机生成一个坐标
 		 * @method random
 		 * @for Group
 		 * @return {Object} 坐标对象，x 横坐标， y 纵坐标
@@ -113,15 +113,15 @@
 	}
 
 	/**
-	 * 随机坐标生成工具
+	 * 散点图工具
 	 * @class ScatterMap
 	 * @constructor
 	 * @exports
 	 * @param {Object} [options] 配置项
 	 *   @param {String} [options.image] 绘制坐标的地图
-	 *   @param {Object} [options.data] 坐标范围分组数据
+	 *   @param {Object} [options.data] 区域矩形分组数据
 	 *     @param {Boolean} [options.data['分组名'].isShow] 是否绘制可见
-	 *     @param {Array} [options.data['分组名'].Areas] 坐标范围数组，每个坐标范围包含x1, x2, y1, y2四个构成面的点
+	 *     @param {Array} [options.data['分组名'].Areas] 区域矩形数组，每个区域矩形包含x1, x2, y1, y2四个构成面的点
 	 *   @param {Object} [options.setting] 设置项
 	 *     @param {Boolean} [options.resize] 是否重置宽高
 	 *       @param {Boolean} [options.width] 重置宽度
